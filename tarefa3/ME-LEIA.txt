@@ -1,0 +1,11 @@
+Caso o programa não esteja rodando, é por conta de estar usando a livraria ControlP5 que você pode encontrar aqui:
+http://www.sojamo.de/libraries/controlP5/
+Esta biblioteca deve ser baixada e extraida do zip e colocada dentro da pasta LOCALDEINSTALAÇÃODOSEUPROCESSING/Sketchbook/libraries
+
+e a biblioteca processing-sound que só é compatível com Processing 3.0+, para instalá-la, pode usar o Processing's Contribution Manager dentro do programa
+https://github.com/processing/processing-sound
+
+Para ser mais específico dentro do programa processing, va em ferramentas->adicionar Ferramentas vai na guia Libraries e filtra por Sound Foundation e depois instala depois filtra pro ControlP5 e instala e tente rodar.
+
+Obs não retirar a pasta data, ela contem os arquivos necessários para o jogo.
+

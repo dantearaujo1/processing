@@ -1,0 +1,132 @@
+// COLORMODE
+colorMode(HSB,TWO_PI,150,300);
+// [Triangulo]: 1
+// -- Cor --
+fill(2.9961486, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(547.0, 99.0, 540.0, 386.0, 632.0, 238.0);
+// [Triangulo]: 2
+// -- Cor --
+fill(2.9961486, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(821.0, 100.0, 739.0, 240.0, 828.0, 386.0);
+// [Triangulo]: 3
+// -- Cor --
+fill(4.9999995, 125.29412, 300.0);
+// -- Vertices do triangulo --
+triangle(540.0, 387.0, 645.0, 516.0, 645.0, 391.0);
+// [Triangulo]: 4
+// -- Cor --
+fill(4.9999995, 125.29412, 300.0);
+// -- Vertices do triangulo --
+triangle(828.0, 386.0, 724.0, 515.0, 724.0, 392.0);
+// [Triangulo]: 5
+// -- Cor --
+fill(0.9973311, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(644.0, 391.0, 645.0, 516.0, 723.0, 516.0);
+// [Triangulo]: 6
+// -- Cor --
+fill(0.9973311, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(723.0, 392.0, 723.0, 516.0, 645.0, 517.0);
+// [Triangulo]: 7
+// -- Cor --
+fill(2.997294, 149.41176, 300.0);
+// -- Vertices do triangulo --
+triangle(644.0, 391.0, 683.0, 456.0, 723.0, 393.0);
+// [Triangulo]: 8
+// -- Cor --
+fill(2.997294, 149.41176, 300.0);
+// -- Vertices do triangulo --
+triangle(541.0, 386.0, 632.0, 351.0, 644.0, 391.0);
+// [Triangulo]: 9
+// -- Cor --
+fill(2.997294, 149.41176, 300.0);
+// -- Vertices do triangulo --
+triangle(723.0, 392.0, 738.0, 349.0, 827.0, 386.0);
+// [Triangulo]: 10
+// -- Cor --
+fill(4.9991217, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(633.0, 351.0, 644.0, 391.0, 723.0, 392.0);
+// [Triangulo]: 11
+// -- Cor --
+fill(4.9991217, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(723.0, 392.0, 738.0, 350.0, 632.0, 349.0);
+// [Triangulo]: 12
+// -- Cor --
+fill(2.998602, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(645.0, 517.0, 723.0, 516.0, 684.0, 541.0);
+// [Triangulo]: 13
+// -- Cor --
+fill(4.9991217, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(540.0, 387.0, 632.0, 239.0, 633.0, 350.0);
+// [Triangulo]: 14
+// -- Cor --
+fill(4.9991217, 148.23529, 300.0);
+// -- Vertices do triangulo --
+triangle(738.0, 241.0, 738.0, 349.0, 828.0, 386.0);
+// [Triangulo]: 15
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(633.0, 348.0, 737.0, 350.0, 632.0, 238.0);
+// [Triangulo]: 16
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(737.0, 240.0, 634.0, 239.0, 736.0, 350.0);
+// [Triangulo]: 17
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(501.0, 403.0, 540.0, 387.0, 540.0, 357.0);
+// [Triangulo]: 18
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(828.0, 356.0, 828.0, 385.0, 866.0, 400.0);
+// [Triangulo]: 19
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(669.0, 532.0, 684.0, 596.0, 641.0, 574.0);
+// [Triangulo]: 20
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(669.0, 533.0, 684.0, 541.0, 684.0, 596.0);
+// [Triangulo]: 21
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(686.0, 541.0, 686.0, 595.0, 726.0, 574.0);
+// [Triangulo]: 22
+// -- Cor --
+fill(0.99673027, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(726.0, 574.0, 701.0, 532.0, 686.0, 540.0);
+// [Triangulo]: 23
+// -- Cor --
+fill(5.0004735, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(501.0, 404.0, 668.0, 532.0, 640.0, 573.0);
+// [Triangulo]: 24
+// -- Cor --
+fill(5.0004735, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(540.0, 387.0, 501.0, 404.0, 668.0, 533.0);
+// [Triangulo]: 25
+// -- Cor --
+fill(5.0004735, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(702.0, 531.0, 866.0, 400.0, 728.0, 574.0);
+// [Triangulo]: 26
+// -- Cor --
+fill(5.0004735, 146.47058, 300.0);
+// -- Vertices do triangulo --
+triangle(828.0, 386.0, 866.0, 400.0, 703.0, 530.0);
