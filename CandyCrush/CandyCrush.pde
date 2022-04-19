@@ -9,12 +9,33 @@ void draw(){
   CandyCrush.play();
 }
 
+void mousePressed(){
+  if (mouseButton == LEFT){
+    Board board = CandyCrush.m_board;
+    Candy candy = board.getCandy(board.mouseToGridX(),board.mouseToGridY());
+    if (candy != null && CandyCrush.m_choice1 == null){
+      pushStyle();
+      fill(255);
+      circle(candy.m_x * board.m_rectSize + board.m_rectSize/2,candy.m_y * board.m_rectSize + board.m_rectSize/2, board.m_candySize);
+      popStyle();
+      CandyCrush.m_choice1 = candy;
+    }
+    else if (candy != null && CandyCrush.m_choice1 != null){
+      CandyCrush.m_choice2 = candy;
+      CandyCrush.swap();
+    }
+  }
+}
+
+void mouseReleased(){
+}
+
 
 class Game{
   Game(int level){
     m_level = level;
     m_score = 0;
-    m_board = new Board(25,15);
+    m_board = new Board(37,31);
   }
 
   void play(){
@@ -22,14 +43,29 @@ class Game{
     m_board.draw();
   }
 
+  void swap(){
+    int difX = m_choice1.m_x - m_choice2.m_x;
+    int difY = m_choice1.m_y - m_choice2.m_y;
+    if(difX >= -1 && difX <= 1 && difY >= -1 && difY <= 1){
+      color temp = m_choice1.m_color;
+      m_choice1.m_color = m_choice2.m_color;
+      m_choice2.m_color = temp;
+      println("Swap");
+    }
+    m_choice1 = null;
+    m_choice2 = null;
+  }
+
   int m_score;
   int m_level;
   Board m_board;
+  Candy m_choice1;
+  Candy m_choice2;
 
 }
 
-final int BOARD_ROWS = 13;
-final int BOARD_COLUMNS = 16;
+final int BOARD_ROWS = 12;
+final int BOARD_COLUMNS = 10;
 class Board{
 
   Board(int rectSize, int candySize){
@@ -37,7 +73,7 @@ class Board{
     m_board = new Candy[BOARD_COLUMNS][BOARD_ROWS];
     for (int y = 0; y < BOARD_COLUMNS; y++){
       for (int x = 0; x < BOARD_ROWS; x++){
-        m_board[y][x] = new Candy(color(random(0,255),random(0,255),random(0,255)));
+        m_board[y][x] = new Candy(x,y,color(random(0,255),random(0,255),random(0,255)));
       }
     }
     m_rectSize = rectSize;
@@ -46,10 +82,6 @@ class Board{
   }
 
   void update(){
-    if(mouseButton == LEFT){
-      text("PRESSED",100,100);
-    }
-
   }
 
   void draw(){
@@ -73,15 +105,13 @@ class Board{
         circle((x * m_rectSize + m_rectSize/2),(y * m_rectSize + m_rectSize/2),m_candySize);
       }
     }
-    if (m_picked){
-      fill(255);
-      // circle((x * m_rectSize + m_rectSize/2),(y * m_rectSize + m_rectSize/2),m_candySize);
-      
-    }
   }
 
   Candy getCandy(int gridX, int gridY){
-    return m_board[gridY][gridX];
+    if(gridX < BOARD_ROWS && gridY < BOARD_COLUMNS){
+      return m_board[gridY][gridX];
+    }
+    return null;
   }
 
   int mouseToGridX(){
@@ -98,33 +128,28 @@ class Board{
 }
 
 class Candy{
-  Candy(color l_color){
+  Candy(int x, int y, color l_color){
     m_color = l_color;
+    m_x = x;
+    m_y = y;
   }
 
-  Action m_action;
   color m_color;
+  int m_x;
+  int m_y;
 
 }
 
-class Action{
-  Action(){
 
-  }
-
-  void doIt(){
-
-  }
-
-  ArrayList<Condition> m_conditions;
-}
-
-class Condition{
-  Condition(){
+class Swap{
+  Swap(){
 
   }
 
   boolean satisfied(){
     return true;
   }
+
+  Candy m_cookieA;
+  Candy m_cookieB;
 }
