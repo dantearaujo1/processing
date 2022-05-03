@@ -1,33 +1,35 @@
+// Setting Global Variables;
 Game CandyCrush;
+HashMap<CANDYTYPES,color> m_colors;
+
+// Setup Initial State
 void setup(){
   size(400,400);
   CandyCrush = new Game(0);
+  m_colors = new HashMap<CANDYTYPES,color>();
 }
 
+// GameLoop
 void draw(){
   background(0);
   CandyCrush.play();
 }
 
+//INPUT FUNCTIONS
 void mousePressed(){
   if (mouseButton == LEFT){
     Board board = CandyCrush.m_board;
     Candy candy = board.getCandy(board.mouseToGridX(),board.mouseToGridY());
     if (candy != null && CandyCrush.m_choice1 == null){
-      pushStyle();
-      fill(255);
-      circle(candy.m_x * board.m_rectSize + board.m_rectSize/2,candy.m_y * board.m_rectSize + board.m_rectSize/2, board.m_candySize);
-      popStyle();
       CandyCrush.m_choice1 = candy;
+      candy.m_selected = true;
     }
     else if (candy != null && CandyCrush.m_choice1 != null){
       CandyCrush.m_choice2 = candy;
+      candy.m_selected = true;
       CandyCrush.swap();
     }
   }
-}
-
-void mouseReleased(){
 }
 
 
@@ -46,12 +48,20 @@ class Game{
   void swap(){
     int difX = m_choice1.m_x - m_choice2.m_x;
     int difY = m_choice1.m_y - m_choice2.m_y;
-    if(difX >= -1 && difX <= 1 && difY >= -1 && difY <= 1){
+    if(difX >= -1 && difX <= 1 && difY == 0){
       color temp = m_choice1.m_color;
       m_choice1.m_color = m_choice2.m_color;
       m_choice2.m_color = temp;
       println("Swap");
     }
+    else if(difX == 0 &&  difY >= -1 && difY <= 1){
+      color temp = m_choice1.m_color;
+      m_choice1.m_color = m_choice2.m_color;
+      m_choice2.m_color = temp;
+      println("Swap");
+    }
+    m_choice1.m_selected = false;
+    m_choice2.m_selected = false;
     m_choice1 = null;
     m_choice2 = null;
   }
@@ -78,7 +88,6 @@ class Board{
     }
     m_rectSize = rectSize;
     m_candySize = candySize;
-    m_picked = false;
   }
 
   void update(){
@@ -92,7 +101,12 @@ class Board{
   void drawBoard(){
     for (int y = 0; y < BOARD_COLUMNS; y++){
       for (int x = 0; x < BOARD_ROWS; x++){
-        fill(122,122,122);
+        if(m_board[y][x].m_selected){
+          fill(255);
+        }
+        else{
+          fill(122,122,122);
+        }
         rect(x*m_rectSize,y*m_rectSize,m_rectSize,m_rectSize);
       }
     }
@@ -124,19 +138,31 @@ class Board{
   Candy[][] m_board;
   int m_rectSize;
   int m_candySize;
-  boolean m_picked;
 }
 
+enum CANDYTYPES{
+  RED,
+  YELLOW,
+  GREEN,
+  BLUE,
+  BLACK,
+  CYAN,
+};
+
 class Candy{
-  Candy(int x, int y, color l_color){
+  Candy(int x, int y, int l_color){
     m_color = l_color;
     m_x = x;
     m_y = y;
+    m_type = CANDYTYPES.RED;
+    m_selected = false;
   }
 
   color m_color;
+  CANDYTYPES m_type;
   int m_x;
   int m_y;
+  boolean m_selected;
 
 }
 
