@@ -4,8 +4,6 @@
 */
 
 Ball b;
-
-
 void setup(){
   size(800,800);
   b = new Ball(width/2,height/2,30);

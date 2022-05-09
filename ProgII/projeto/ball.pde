@@ -3,7 +3,6 @@
    the ball height in a 2D canvas
    */
 
-
 class Ball{
 
   float m_x;
@@ -48,15 +47,15 @@ class Ball{
 
   void simulateHeight(){
     m_y += m_vel.y;
-    if (m_y >= m_z){
-      m_y = m_z;
-      m_vel.y = - m_vel.y;
-      m_newY = m_z - (m_oldY - m_z) * 0.8;
-    }
-    if (m_y < m_newY){
-      m_y = m_newY;
-      m_vel.y = - m_vel.y;
-      m_oldY = m_newY;
-    }
+    // if (m_y >= m_z){
+    //   m_y = m_z;
+    //   m_vel.y = - m_vel.y;
+    //   m_newY = m_z - (m_oldY - m_z) * 0.8;
+    // }
+    // if (m_y < m_newY){
+    //   m_y = m_newY;
+    //   m_vel.y = - m_vel.y;
+    //   m_oldY = m_newY;
+    // }
   }
 }
