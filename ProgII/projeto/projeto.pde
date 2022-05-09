@@ -4,9 +4,11 @@
 */
 
 Ball b;
+Court c;
 void setup(){
   size(800,800);
-  b = new Ball(width/2,height/2,30);
+  b = new Ball(width/2,height/2,15);
+  c = new Court();
 }
 
 void draw(){
@@ -14,7 +16,7 @@ void draw(){
 
   // Update Loop
   b.update();
-
   // Draw Loop
+  c.draw();
   b.draw();
 }
