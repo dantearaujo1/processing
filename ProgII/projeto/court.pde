@@ -23,26 +23,22 @@ class Court{
   }
 
   void draw(){
+    fill(0,0,70);
+    stroke(190);
     beginShape();
     for (int i = 0; i < 4; i++){
       vertex(m_vertices[i].m_x, m_vertices[i].m_y);
-      fill(255,0,0);
-      if(i == 0 || i == 3){
-        text(m_vertices[i].m_x + "," + m_vertices[i].m_y, m_vertices[i].m_x, m_vertices[i].m_y + 20);
-      }
-      else{
-        text(m_vertices[i].m_x + "," + m_vertices[i].m_y, m_vertices[i].m_x, m_vertices[i].m_y);
-
-      }
     }
-    endShape();
+    endShape(CLOSE);
+    noStroke();
 
-    stroke(255);
-    line(80,0,80, 800);
-    line(10,0,10, 800);
-    line(720,0,720, 800);
-    line(780,0,780, 800);
-
+    // Drawing the net... i should put this in another class
+    float middleInitX = (m_vertices[0].m_x + m_vertices[1].m_x)/2;
+    float middleEndX = (m_vertices[2].m_x + m_vertices[3].m_x)/2;
+    float w = middleEndX - middleInitX ;
+    float h = 0.05 * height;
+    fill(122);
+    rect(middleInitX, 0.5 * height - h * 2, w, h);
   }
   void update(){
 
