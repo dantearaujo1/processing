@@ -18,6 +18,8 @@ void draw(){
 
   // Update Loop
   b.update();
+  c.update();
+  b.checkNet(c.getNet());
   /* b.move(new PVector(0,-1)); */
   // Draw Loop
   c.draw();

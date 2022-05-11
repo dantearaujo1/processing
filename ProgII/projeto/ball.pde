@@ -6,37 +6,34 @@
 class Ball{
 
   // m_x and m_x are positions in the window plane 2D
-  float m_x;
-  float m_y;
+  float   m_x;
+  float   m_y;
+  int     m_diameter;
 
-  float m_z;
-  float m_currentHeight;
-  float m_maxHeight;
-  float m_currentMaxHeight;
-  boolean m_kicking;
-  int m_kickCount;
-  Player m_lastHit;
-  // m_velZ will be used to make a fake height movement
-  int m_velZ;
-
-  // m_vel will be used to move in the 2d plane x and y
+  int     m_velZ;
   PVector m_vel;
 
+  float   m_currentHeight;
+  float   m_maxHeight;
+  float   m_currentMaxHeight;
+  int     m_kickCount;
+  boolean m_kicking;
+  Player  m_lastHit;
+  // m_velZ will be used to make a fake height movement
 
-  int   m_diameter;
-  color m_color;
+  // m_vel will be used to move in the 2d plane x and y
+  color   m_color;
 
   // Constructor
   Ball(){
     m_x = 0;
     m_y = 0;
-    m_z = m_y;
     m_diameter = 15;
     m_color = color(190,190,0);
     m_vel = new PVector(0,1);
     m_velZ = 1;
 
-    m_maxHeight = 50;
+    m_maxHeight = 70;
     m_currentMaxHeight = m_maxHeight;
     m_currentHeight = 0;
     m_kicking = true;
@@ -47,7 +44,6 @@ class Ball{
   Ball(float x, float y, int d){
     m_x = x;
     m_y = y;
-    m_z = m_y;
     m_diameter = d;
     m_color = color(190,190,0);
     m_vel = new PVector(0,3);
@@ -61,10 +57,12 @@ class Ball{
   }
 
   void update(){
-    simulateHeight();
-    checkOutOfBounds();
-    m_y += m_vel.y;
-    m_x += m_vel.x;
+    if(m_kicking){
+      simulateHeight();
+      checkOutOfBounds();
+      m_y += m_vel.y;
+      m_x += m_vel.x;
+    }
   }
   void draw(){
 
@@ -98,14 +96,13 @@ class Ball{
       }
 
       if(m_currentHeight <= 0){
-        println("Case 2");
         m_currentHeight = 0;
         m_currentMaxHeight = m_currentMaxHeight * 0.8;
         m_velZ = - m_velZ;
         m_kickCount += 1;
+        println("Kick count: " + m_kickCount);
       }
       else if (m_currentHeight >= m_currentMaxHeight){
-        println("Case 1");
         m_currentHeight = m_currentMaxHeight;
         m_velZ = - m_velZ;
       }
@@ -135,8 +132,7 @@ class Ball{
       m_vel.x *= -1;
     }
   }
-  // Ball should move in the direction passed and with velocity
-  // calculated using our distance m_z to player m_z, low values are better
+
   void move(int x){
     m_vel.x = x;
   }
@@ -145,7 +141,7 @@ class Ball{
     // Change ball direction
     m_vel.y *= -1;
     if(m_velZ < 0){
-      // Player should push ball up always
+      // Player should push ball Z up always
       m_velZ *= p.m_facingDirection;
     }
     // Reset our kickCount
@@ -155,5 +151,23 @@ class Ball{
     m_lastHit = p;
     // We should make an formula for this.
     m_currentMaxHeight = 50;
+  }
+
+  void checkNet(Net n){
+    if (n.getZ() >= m_currentHeight && m_kicking == true){
+      float radius = (  m_diameter * m_currentHeight/m_currentMaxHeight ) * 2 ;
+      if(m_x + radius < n.getPosX() || m_x - radius > n.getPosX() + n.getWidth()){
+        return;
+      }
+      else if(m_y + radius < n.getPosY() - n.getHeight() || m_y - radius > n.getPosY()){
+        return;
+      }
+      else{
+        m_y = n.getPosY() - radius;
+        m_kicking = false;
+        m_currentMaxHeight = 0.1;
+      }
+
+    }
   }
 }
