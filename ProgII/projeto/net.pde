@@ -21,15 +21,18 @@ class Net{
     // points
     rect(m_x,m_y - m_size.y,m_size.x,m_size.y);
 
-    pushStyle();
-    stroke(255,0,0);
-    text("m_y: " + m_y,10,m_y);
-    line(0,m_y ,width,m_y );
-    text("m_y - m_size.y: " + ( m_y - m_size.y ),10,m_y - m_size.y);
-    line(0,m_y - m_size.y,width,m_y - m_size.y);
-    text("m_y - 2 * m_size.y: " + ( m_y - 2 * m_size.y ),10,m_y - 2 * m_size.y);
-    line(0,m_y - 2 * m_size.y,width,m_y - 2 * m_size.y);
-    popStyle();
+    // Only for Debugging Process
+    if (debug){
+      pushStyle();
+      stroke(255,0,0);
+      text("m_y: " + m_y,10,m_y);
+      line(0,m_y ,width,m_y );
+      text("m_y - m_size.y: " + ( m_y - m_size.y ),10,m_y - m_size.y);
+      line(0,m_y - m_size.y,width,m_y - m_size.y);
+      text("m_y - 2 * m_size.y: " + ( m_y - 2 * m_size.y ),10,m_y - 2 * m_size.y);
+      line(0,m_y - 2 * m_size.y,width,m_y - 2 * m_size.y);
+      popStyle();
+    }
   }
 
   void setPos(float x, float y){

@@ -10,7 +10,7 @@ class Ball{
   float   m_y;
   int     m_diameter;
 
-  int     m_velZ;
+  float   m_velZ;
   PVector m_vel;
 
   float   m_currentHeight;
@@ -18,6 +18,7 @@ class Ball{
   float   m_currentMaxHeight;
   int     m_kickCount;
   boolean m_kicking;
+  boolean m_serve;
   Player  m_lastHit;
   // m_velZ will be used to make a fake height movement
 
@@ -36,7 +37,8 @@ class Ball{
     m_maxHeight = 70;
     m_currentMaxHeight = m_maxHeight;
     m_currentHeight = 0;
-    m_kicking = true;
+    m_kicking = false;
+    m_serve = true;
     m_kickCount = 0;
   }
 
@@ -46,22 +48,27 @@ class Ball{
     m_y = y;
     m_diameter = d;
     m_color = color(190,190,0);
-    m_vel = new PVector(0,3);
+    m_vel = new PVector(0,0);
     m_velZ = 1;
 
     m_maxHeight = 70;
     m_currentMaxHeight = m_maxHeight;
-    m_currentHeight = 0;
-    m_kicking = true;
+    m_currentHeight = 1;
+    m_kicking = false;
+    m_serve = true;
     m_kickCount = 0;
   }
 
   void update(){
     if(m_kicking){
+      m_velZ -= 0.08;
       simulateHeight();
       checkOutOfBounds();
       m_y += m_vel.y;
       m_x += m_vel.x;
+    }
+    if(m_serve){
+      simulateHeight();
     }
   }
   void draw(){
@@ -78,14 +85,25 @@ class Ball{
 
     // Drawing shadow first so it go behind the ball fill(140);
     fill(0,100,100);
-    circle(m_x,m_y + shadowSize/2,shadowSize);
+    circle(m_x,m_y+ shadowSize/2,shadowSize);
     // Drawing the ball
     fill(m_color);
     circle(m_x,m_y - m_currentHeight,ballSize);
+
+    // Debug ball information
+    if(debug){
+      pushStyle();
+      fill(0,255,0);
+      text("Position: " + m_x + "," + (m_y - m_currentHeight) , m_x + 30, m_y - 20);
+      text("Z height: " + m_currentHeight, m_x + 30, m_y );
+      text("MaxCurrentHeight: " + m_currentMaxHeight, m_x + 30,  m_y + 20);
+      text("Vel Z: " + m_velZ, m_x + 30,  m_y + 40);
+      popStyle();
+    }
   }
 
   void simulateHeight(){
-    if(m_kicking){
+    if(m_kicking && !m_serve){
       m_currentHeight += m_velZ;
       if (m_currentMaxHeight <= 1){
         m_kicking = false;
@@ -98,20 +116,36 @@ class Ball{
       if(m_currentHeight <= 0){
         m_currentHeight = 0;
         m_currentMaxHeight = m_currentMaxHeight * 0.8;
-        m_velZ = - m_velZ;
+        m_velZ = - m_velZ * 0.8;
         m_kickCount += 1;
         println("Kick count: " + m_kickCount);
       }
       else if (m_currentHeight >= m_currentMaxHeight){
         m_currentHeight = m_currentMaxHeight;
-        m_velZ = - m_velZ;
+      /*   m_velZ = - m_velZ; */
       }
+    }
+    else if(m_serve){
+      float t = time/duration;
+      if (t <= 0.70){
+        m_currentHeight = (m_currentHeight) + (35 - m_currentHeight) * ((t));
+      }
+      else if (t >  0.70){
+        m_currentHeight = (0) + (m_currentHeight) * (1 - (t*t*t));
+      }
+      if (t >= 1.0){
+        time = 0;
+      }
+      text("TIME: " + time, 20,20);
+      text("Duration: " + duration, 20,40);
+      text("T: " + t, 20,60);
+      time += 2;
     }
   }
 
+  // We need to get our circle correct dimensions to check out of window
+  // collision.
   void checkOutOfBounds(){
-    // We need to get our circle correct dimensions to check out of window
-    // collision.
     float percentage = m_currentHeight/m_currentMaxHeight;
     float check = percentage < 0.7 ? 0.7 : percentage;
 
@@ -133,11 +167,16 @@ class Ball{
     }
   }
 
-  void move(int x){
-    m_vel.x = x;
-  }
-
   void hit(Player p){
+    // Serve
+    if(m_vel.y == 0){
+      m_vel.y = 3;
+      m_currentHeight = 2 * m_currentHeight;
+    }
+    else{
+      // We should make an formula for this.
+      m_currentMaxHeight = 50;
+    }
     // Change ball direction
     m_vel.y *= -1;
     if(m_velZ < 0){
@@ -146,11 +185,9 @@ class Ball{
     }
     // Reset our kickCount
     m_kickCount = 0;
-
     // Set the lastPlayer to hit the ball
     m_lastHit = p;
-    // We should make an formula for this.
-    m_currentMaxHeight = 50;
+
   }
 
   void checkNet(Net n){

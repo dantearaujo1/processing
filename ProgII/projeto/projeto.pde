@@ -6,11 +6,17 @@
 Ball b;
 Court c;
 Player p;
+boolean debug;
+float duration;
+float time;
 void setup(){
   size(800,800);
-  b = new Ball(width/2,0,15);
+  b = new Ball(width/2,100,15);
   c = new Court();
   p = new Player();
+  duration = 75;
+  time = 0;
+  debug = false;
 }
 
 void draw(){
@@ -20,7 +26,7 @@ void draw(){
   b.update();
   c.update();
   b.checkNet(c.getNet());
-  /* b.move(new PVector(0,-1)); */
+
   // Draw Loop
   c.draw();
   b.draw();
@@ -29,6 +35,13 @@ void draw(){
 
 
 void keyPressed(){
+  if(b.m_serve){
+    if(key == ' '){
+      b.m_serve = false;
+      b.m_kicking = true;
+      p.hit(b);
+    }
+  }
   if(key == 'd'){
     p.move(5,0);
   }
@@ -41,7 +54,12 @@ void keyPressed(){
   if(key == 'w'){
     p.move(0,-5);
   }
-  if(key == ' '){
-    p.hit(b);
+  else{
+    if(key == ' '){
+      p.hit(b);
+    }
+  }
+  if(key == 'q'){
+    debug = !debug;
   }
 }
