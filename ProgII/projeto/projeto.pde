@@ -6,14 +6,18 @@
 Ball b;
 Court c;
 Player p;
+Player p2;
 boolean debug;
 float duration;
 float time;
+
 void setup(){
   size(800,800);
-  b = new Ball(width/2,100,15);
   c = new Court();
-  p = new Player();
+  b = new Ball(0,640,15);
+  p = new Player(width/2, 620, -1);
+  p2 = new Player(0, 0, 1);
+  setServe(p,p2,b);
   duration = 75;
   time = 0;
   debug = false;
@@ -24,42 +28,91 @@ void draw(){
 
   // Update Loop
   b.update();
+  p.update(b);
+  p2.update(b);
   c.update();
   b.checkNet(c.getNet());
 
   // Draw Loop
   c.draw();
+  p2.draw(b);
+  c.drawNet();
   b.draw();
-  p.draw();
+  p.draw(b);
+}
+
+void reset(){
+  setup();
 }
 
 
 void keyPressed(){
-  if(b.m_serve){
+  if(b.isServed()){
     if(key == ' '){
-      b.m_serve = false;
-      b.m_kicking = true;
       p.hit(b);
     }
-  }
-  if(key == 'd'){
-    p.move(5,0);
-  }
-  if(key == 'a'){
-    p.move(-5,0);
-  }
-  if(key == 's'){
-    p.move(0,5);
-  }
-  if(key == 'w'){
-    p.move(0,-5);
+    if(key == 'ç'){
+      p2.hit(b);
+    }
   }
   else{
     if(key == ' '){
       p.hit(b);
     }
+    if(key == 'ç'){
+      p2.hit(b);
+    }
   }
+  // PLAYER 1 INPUT
+  if(key == 'd'){
+    p.move(1,0);
+  }
+  if(key == 'a'){
+    p.move(-1,0);
+  }
+  if(key == 's'){
+    p.move(0,1);
+  }
+  if(key == 'w'){
+    p.move(0,-1);
+  }
+  // PLAYER 2 INPUT
+  if(key == 'l'){
+    p2.move(5,0);
+  }
+  if(key == 'j'){
+    p2.move(-5,0);
+  }
+  if(key == 'k'){
+    p2.move(0,5);
+  }
+  if(key == 'i'){
+    p2.move(0,-5);
+  }
+
   if(key == 'q'){
     debug = !debug;
+  }
+  if(key == 'r'){
+    reset();
+  }
+}
+
+void setServe(Player p1, Player p2, Ball p){
+  b.setServe(false);
+  b.setKicking(false);
+  p1.setServe(false);
+  p2.setServe(true);
+  if(p1.getFacing() == 1){
+    p1.setPos(width/2, 130);
+    b.setPos(p1.getPosX() - 20, p1.getPosY() - 20);
+    p2.setPos(width/2, 620);
+
+  }
+  else{
+    p1.setPos(width/2, 620);
+    b.setPos(p1.getPosX() - 20, p1.getPosY() + 20);
+    p2.setPos(width/2, 130);
+
   }
 }

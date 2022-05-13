@@ -43,6 +43,8 @@ class Court{
     endShape(CLOSE);
     noStroke();
 
+  }
+  void drawNet(){
     m_net.draw();
   }
   void update(){
