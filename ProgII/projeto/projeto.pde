@@ -32,9 +32,7 @@ void draw(){
   b.setBallSide(c.getNet());
   p.update();
   p2.update();
-
-
-
+  
   // Draw Loop
   c.draw();
   p2.draw(b);

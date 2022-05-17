@@ -75,11 +75,11 @@ class Ball{
 
     // Getting a percentage of the distance between ball current fake height
     // and currentMaxHeight
-    float shadowIncreasePercentage = 1 - m_currentHeight/m_maxHeight;
-    float shadowFullSize = m_diameter * 0.7;
+    float shadowPercentage = m_currentHeight/m_maxHeight;
+    float shadowFullSize = m_diameter * 0.5;
     //float shadowIncreasePercentage = m_currentHeight/m_maxHeight;
     //float shadowFullSize = m_diameter * 2.0;
-    float shadowSize = shadowFullSize * shadowIncreasePercentage;
+    float shadowSize = shadowFullSize + shadowFullSize/2 * shadowPercentage;
 
     float ballIncreasePercentage = m_currentHeight/m_maxHeight <= 0.7 ? 0.7 : m_currentHeight/m_maxHeight;
     float ballFullSize = m_diameter;
@@ -88,7 +88,8 @@ class Ball{
     // Drawing shadow first so it go behind the ball fill(140);
     pushStyle();
     noStroke();
-    fill(10,10,10,(1-m_currentHeight/m_maxHeight) * 255);
+    fill(100,100,100,(1-m_currentHeight/m_maxHeight) * 255);
+    //fill(10,10,10,(1-m_currentHeight/m_maxHeight) * 255);
     circle(m_x,m_y+ shadowSize/2,shadowSize);
     
     // Drawing the ball
@@ -126,7 +127,7 @@ class Ball{
   void startServing(){
       float t = time/duration;
        if (t <= 0.70){ 
-         m_currentHeight = (m_currentHeight) + (35 - m_currentHeight) * ((t));
+         m_currentHeight = (m_currentHeight) + (35 - m_currentHeight) * (t*t);
        }
        else if (t >  0.70){
          m_currentHeight = (0) + (m_currentHeight) * (1 - (t*t*t));

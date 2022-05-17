@@ -104,15 +104,18 @@ class Player{
     fill(122,0,0);
     
     if(debug){
+      stroke(255);
+      noFill();  
+      rect(m_racketX-m_racketSize.x/2,m_racketY - m_racketSize.y/2, m_racketSize.x, m_racketSize.y);
+      
       if(checkHit(b)){
         fill(0,255,0);
       }
-      
-      stroke(255);
-      rect(m_racketX,m_racketY, m_racketSize.x, m_racketSize.y);
-    }
-
-    ellipse(m_x-m_racketSize.x/2, m_y, m_racketSize.x, m_racketSize.y);
+      else{
+        fill(122,0,0);
+      }      
+    }    
+    ellipse(m_racketX, m_racketY, m_racketSize.x, m_racketSize.y);
 
     
   }
@@ -154,6 +157,6 @@ class Player{
     m_x = x;
     m_y = y;
     m_racketX = m_x - 15;
-    m_racketY = m_y - 13;
+    m_racketY = m_y - 10;
   }
 }

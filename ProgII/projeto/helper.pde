@@ -30,3 +30,14 @@ boolean CollisionRR(float x1,float y1,float w1, float h1,float x2,float y2, floa
   }
   return true;
 }
+
+boolean CollisionCC(float cx1,float cy1, float r1, float cx2, float cy2, float r2){
+    float dist = dist(cx1,cy1,cx2,cy2);
+    
+    if (dist < r1 + r1){
+      return true;
+    }
+    else {
+      return false;
+    }
+}
