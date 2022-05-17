@@ -47,9 +47,7 @@ class Court{
   void drawNet(){
     m_net.draw();
   }
-  void update(){
 
-  }
   Net getNet(){
     return m_net;
   }

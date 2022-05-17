@@ -76,7 +76,9 @@ class Ball{
     // Getting a percentage of the distance between ball current fake height
     // and currentMaxHeight
     float shadowIncreasePercentage = 1 - m_currentHeight/m_maxHeight;
-    float shadowFullSize = m_diameter * 0.6;
+    float shadowFullSize = m_diameter * 0.7;
+    //float shadowIncreasePercentage = m_currentHeight/m_maxHeight;
+    //float shadowFullSize = m_diameter * 2.0;
     float shadowSize = shadowFullSize * shadowIncreasePercentage;
 
     float ballIncreasePercentage = m_currentHeight/m_maxHeight <= 0.7 ? 0.7 : m_currentHeight/m_maxHeight;
@@ -84,11 +86,15 @@ class Ball{
     float ballSize = ballFullSize * ballIncreasePercentage;
 
     // Drawing shadow first so it go behind the ball fill(140);
-    fill(0,100,100);
+    pushStyle();
+    noStroke();
+    fill(10,10,10,(1-m_currentHeight/m_maxHeight) * 255);
     circle(m_x,m_y+ shadowSize/2,shadowSize);
+    
     // Drawing the ball
     fill(m_color);
     circle(m_x,m_y - m_currentHeight,ballSize);
+    popStyle();
 
     // Debug ball information
     if(debug){
@@ -105,7 +111,6 @@ class Ball{
         m_vel.y = 0;
         return;
       }
-
       if(m_currentHeight <= 0){
         m_currentHeight = 0;
         m_currentMaxHeight = m_currentMaxHeight * 0.8;
@@ -120,19 +125,16 @@ class Ball{
 
   void startServing(){
       float t = time/duration;
-      /* if (t <= 0.70){ */
-      /*   m_currentHeight = (m_currentHeight) + (35 - m_currentHeight) * ((t)); */
-      /* } */
-      /* else if (t >  0.70){ */
-      /*   m_currentHeight = (0) + (m_currentHeight) * (1 - (t*t*t)); */
-      /* } */
-      /* if (t >= 1.0){ */
-      /*   time = 0; */
-      /* } */
-      text("TIME: " + time, 20,20);
-      text("Duration: " + duration, 20,40);
-      text("T: " + t, 20,60);
-      time += 2;
+       if (t <= 0.70){ 
+         m_currentHeight = (m_currentHeight) + (35 - m_currentHeight) * ((t));
+       }
+       else if (t >  0.70){
+         m_currentHeight = (0) + (m_currentHeight) * (1 - (t*t*t));
+       }
+       if (t >= 1.0){
+         time = 0;
+       } 
+      time += 1;
   }
 
   // We need to get our circle correct dimensions to check out of window
@@ -159,45 +161,39 @@ class Ball{
     }
   }
 
-  void hit(Player p){
-  }
-
   void checkNet(Net n){
-    if (n.getZ() >= m_currentHeight && m_kicking == true){
-      float radius = (  m_diameter * m_currentHeight/m_currentMaxHeight ) / 2 ;
-      if(m_x + radius < n.getPosX() || m_x - radius > n.getPosX() + n.getWidth()){
+    
+    if (n.getZ() >= m_currentHeight && m_kicking == true){ 
+      float radius = getBallDiameter() / 2 ;
+      if(!CollisionCR(m_x,m_y,radius,n.getPosX(),n.getPosY(),n.getWidth(),n.getHeight())){
         return;
-      }
-      else if(m_y + radius < n.getPosY() - n.getHeight() || m_y - radius > n.getPosY()){
-        return;
-      }
+      }      
       else{
         m_y = n.getPosY() - radius;
         m_kicking = false;
         m_currentMaxHeight = 0.1;
       }
     }
+  }
+  void setBallSide(Net n){
     if(m_y < n.getPosY()){
       m_side = 1;
-    }
+  }
     else if (m_y > n.getPosY()){
       m_side = 2;
-    }
-    else{
-      // IMPOSSIBRU
     }
   }
   void debug(){
       pushStyle();
       fill(0,255,0);
-      text("Position: " + m_x + "," + (m_y - m_currentHeight) , m_x, m_y - 20);
-      text("Z height: " + m_currentHeight, m_x + 30, m_y );
-      text("MaxCurrentHeight: " + m_currentMaxHeight, m_x + 30,  m_y + 20);
-      text("Vel Z: " + m_velZ, m_x + 30,  m_y + 40);
-      text("Radius: " + getBallDiameter()/2, m_x + 30, m_y + 60);
-      text("KickCount: " + m_kickCount, 100, 16);
-      text("Served: " + m_served, 100, 30);
-      text("Side: " + m_side, 100, 60);
+      text("Ball Position: " + m_x + "," + (m_y - m_currentHeight) , 100,15);
+      text("Z height: " + m_currentHeight, 100,30 );
+      text("MaxCurrentHeight: " + m_currentMaxHeight, 100,45);
+      text("Vel Z: " + m_velZ, 100, 60);
+      text("Radius: " + getBallDiameter()/2, 100,75);
+      text("KickCount: " + m_kickCount, 0, 15);
+      text("Served: " + m_served, 0, 30);
+      text("Side: " + m_side, 0, 45);
       popStyle();
 
   }
@@ -255,6 +251,8 @@ class Ball{
   void setKicking(boolean shouldKick){
     m_kicking = shouldKick;
   }
+  
+  
   // ==========================================================================
   // Helpers =================================================================
   PVector getBallPosition(){
@@ -264,5 +262,3 @@ class Ball{
    return (m_diameter * m_currentHeight/m_maxHeight);
   }
 }
-
-

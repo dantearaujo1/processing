@@ -26,6 +26,7 @@ class Player{
     m_power = 10;
     m_racketHeight = 35;
     m_racketSize = new PVector(15,25);
+    m_vel = new PVector(0,3);
     m_facingDirection = -1;
     m_served = false;
     m_shouldServe = false;
@@ -43,14 +44,16 @@ class Player{
     m_served = false;
     m_shouldServe = false;
     m_size = new PVector(20,30);
+    m_vel = new PVector(0,3);
 
   }
 
   void hit(Ball b){
     if(checkHit(b)){
+      
+      // If we are in serve state we should shoot the ball at some speed and some Height
       if(!b.isServed()){
-        b.setVel(0,3);
-        b.setCurrentHeight(2 * b.getCurrentHeight());
+        b.setVel(0,3);        
       }
       else{
         // TODO: Make an formula when hit the ball
@@ -60,6 +63,8 @@ class Player{
       }
       // TODO: Correct this
       // Change ball direction
+      float d = m_vel.dot(b.getVel());
+      text(d,200,10);
       b.setVel(0,-b.getVel().y);
       if(b.getVelZ() < 0){
         // Player should push ball Z up always
@@ -74,51 +79,57 @@ class Player{
     }
 
   }
-
-  void update(Ball b){
+  
+  void update(){
+    if (m_x - 15 < 0){
+      m_x = 15;
+    }
+    if (m_y - m_size.y/2 < 0){
+      m_y = m_size.y/2;
+    }
+    if (m_x  > width - m_size.x){
+      m_x = width - m_size.x;
+    }
+    if (m_y  > height - m_size.y){
+      m_y = height - m_size.y;
+    }
   }
 
   void draw(Ball b){
+    stroke(255);
     fill(90,40,90);
     circle(m_x + m_size.x/2, m_y - m_size.y/2, m_size.x);
     fill(0,0,150);
     rect(m_x, m_y, m_size.x, m_size.y);
-    text(m_x + "," + m_y, m_x, m_y);
-    text(( m_x + m_size.x) + "," + ( m_y + m_size.y ), ( m_x + m_size.x), ( m_y + m_size.y ));
     fill(122,0,0);
-    pushMatrix();
-    translate(m_x - 15,m_y - 10);
-    rotate(-PI/6);
+    
     if(debug){
       if(checkHit(b)){
         fill(0,255,0);
       }
-    }
-    ellipse(0, 0, m_racketSize.x, m_racketSize.y);
-    popMatrix();
-    if(debug){
-      noFill();
+      
       stroke(255);
-      rect(m_racketX - 12,m_racketY - 15, m_racketSize.x + 7, 30);
+      rect(m_racketX,m_racketY, m_racketSize.x, m_racketSize.y);
     }
+
+    ellipse(m_x-m_racketSize.x/2, m_y, m_racketSize.x, m_racketSize.y);
+
+    
   }
+  
   void move(int x, int y){
     m_racketX += x;
     m_racketY += y;
     m_x += x;
     m_y += y;
   }
+  
   boolean checkHit(Ball b){
-    float radius = b.getBallDiameter()/2;
-    float adjustmentX = m_racketX - 12;
-    float adjustmentY = m_racketY - 15;
-    if(adjustmentX + m_racketSize.x + 6<= b.getBallPosition().x - radius || adjustmentX >= b.getBallPosition().x + radius ){
-      return false;
+    float radius = b.getBallDiameter()/2;    
+    if(CollisionCR(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketSize.x, m_racketSize.y)){
+      return true;
     }
-    if(adjustmentY  + m_racketSize.y <= b.getBallPosition().y || adjustmentY  >= b.getBallPosition().y + radius ){
-      return false;
-    }
-    return true;
+    return false;
   }
 
   boolean isServed(){
@@ -143,7 +154,6 @@ class Player{
     m_x = x;
     m_y = y;
     m_racketX = m_x - 15;
-    m_racketY = m_y - 12;
+    m_racketY = m_y - 13;
   }
 }
-

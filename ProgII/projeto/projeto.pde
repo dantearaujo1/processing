@@ -28,10 +28,12 @@ void draw(){
 
   // Update Loop
   b.update();
-  p.update(b);
-  p2.update(b);
-  c.update();
   b.checkNet(c.getNet());
+  b.setBallSide(c.getNet());
+  p.update();
+  p2.update();
+
+
 
   // Draw Loop
   c.draw();
