@@ -9,8 +9,10 @@ class Player{
 
   float m_racketX;
   float m_racketY;
+  float m_racketXOffset;
+  float m_racketYOffset;
   float m_racketHeight;
-  PVector m_racketSize;
+  float m_racketDiameter;
 
   PVector m_vel;
   float m_power;
@@ -21,12 +23,14 @@ class Player{
   Player(){
     m_x = width/2;
     m_y = height/2;
-    m_racketX =  m_x - 15;
-    m_racketY = m_y - 10;
-    m_power = 10;
+    m_racketXOffset = 15;
+    m_racketYOffset = 10;
+    m_racketX =  m_x - m_racketXOffset;
+    m_racketY = m_y - m_racketYOffset;
+    m_power = 100;
     m_racketHeight = 35;
-    m_racketSize = new PVector(15,25);
-    m_vel = new PVector(0,3);
+    m_racketDiameter = 30;
+    m_vel = new PVector(0,0);
     m_facingDirection = -1;
     m_served = false;
     m_shouldServe = false;
@@ -35,101 +39,135 @@ class Player{
   Player(float x, float y, int facing){
     m_x = x;
     m_y = y;
-    m_racketX =  m_x - 15;
-    m_racketY = m_y - 10;
-    m_power = 10;
+    m_racketXOffset = 15;
+    m_racketYOffset = 10;
+    m_racketX =  m_x - m_racketXOffset;
+    m_racketY = m_y - m_racketYOffset;
+    m_power = 100;
     m_racketHeight = 35;
-    m_racketSize = new PVector(15,25);
+    m_racketDiameter = 30;
     m_facingDirection = facing;
     m_served = false;
     m_shouldServe = false;
     m_size = new PVector(20,30);
-    m_vel = new PVector(0,3);
+    m_vel = new PVector(0,0);
 
+  }
+  void handleInput(){
+    if(keyPressed){
+      if(key == 'd'){
+        setVel(100,m_vel.y);
+      }
+      if(key == 'a'){
+        setVel(-100,m_vel.y);
+      }
+      if(key == 'w'){
+        setVel(m_vel.x,-100);
+      }
+      if(key == 's'){
+        setVel(m_vel.x,100);
+      }
+    }
+    else if (!keyPressed){
+
+    }
   }
 
   void hit(Ball b){
     if(checkHit(b)){
-      
-      // If we are in serve state we should shoot the ball at some speed and some Height
-      if(!b.isServed()){
-        b.setVel(0,3);        
+
+      // If we are in serve state but did not hit the ball yet we should go here
+      if(b.isServed() && !isServed()){
+        b.setVel(0,200);
+        b.setVelZ(m_power);
+        setServe(true);
+        return;
       }
-      else{
-        // TODO: Make an formula when hit the ball
-        // We should make an formula for this.
-        b.setCurrentMaxHeight(b.getCurrentMaxHeight() + m_power);
-        b.setCurrentHeight(b.getCurrentHeight());
-      }
+      // Already Served the ball and hitted.
+
+      // TODO: Make an formula when hit the ball
+      PVector bpos = b.getBallPosition();
+      float dist = dist(bpos.x,bpos.y,m_racketX,m_racketY);
+      float result = m_power * (1 - dist/m_racketDiameter);
+      println("Shoot with: " + result + " power");
+      println("Dist: " + dist);
+      println("Percentage: " + dist/m_racketDiameter);
+      b.setVelZ(m_power);
+      b.setCurrentMaxHeight(b.getMaxHeight());
+
+
       // TODO: Correct this
       // Change ball direction
-      float d = m_vel.dot(b.getVel());
-      text(d,200,10);
-      b.setVel(0,-b.getVel().y);
-      if(b.getVelZ() < 0){
-        // Player should push ball Z up always
-        b.setVelZ(m_facingDirection * m_power);
-      }
+      // Using dot product to shoot foward
+      // Direction should be -1;
+      float direction = b.getVel().copy().normalize().dot(0,m_facingDirection,0);
+      b.setVel(0,b.getVel().y * direction);
+
       // Reset our kickCount
       b.setKickCount(0);
       // Set the lastPlayer to hit the ball
       b.setLastHit(this);
-      b.setServe(true);
-      b.setKicking(true);
     }
 
   }
-  
+
   void update(){
-    if (m_x - 15 < 0){
-      m_x = 15;
+
+    m_x += m_vel.x * getDeltaTime();
+    m_y += m_vel.y * getDeltaTime();
+    m_racketX = m_x - 15;
+    m_racketY = m_y - 15;
+    // This is our imaginary bounding box for player with rackets and head
+    // Theses variables are offsets from our player X,Y top left corner rect
+    float top = m_size.y/2 + m_size.x/2;
+    float bottom = height - m_size.y;
+    // BUG: Jittering motion because of left colliding with window X = 0
+    float left = m_racketDiameter -  m_racketX  ;
+    float right = width - m_size.x;
+
+    if (m_x < left){
+      setPos(left,m_y);
     }
-    if (m_y - m_size.y/2 < 0){
-      m_y = m_size.y/2;
+    if (m_y < top){
+      setPos(m_x,top);
     }
-    if (m_x  > width - m_size.x){
-      m_x = width - m_size.x;
+    if (m_x  > right){
+      setPos(right,m_y);
     }
-    if (m_y  > height - m_size.y){
-      m_y = height - m_size.y;
+    if (m_y  > bottom){
+      setPos(m_x,bottom);
     }
   }
 
-  void draw(Ball b){
+  void draw(){
     stroke(255);
     fill(90,40,90);
     circle(m_x + m_size.x/2, m_y - m_size.y/2, m_size.x);
     fill(0,0,150);
     rect(m_x, m_y, m_size.x, m_size.y);
     fill(122,0,0);
-    
+
     if(debug){
       stroke(255);
-      noFill();  
-      rect(m_racketX-m_racketSize.x/2,m_racketY - m_racketSize.y/2, m_racketSize.x, m_racketSize.y);
-      
-      if(checkHit(b)){
-        fill(0,255,0);
-      }
-      else{
-        fill(122,0,0);
-      }      
-    }    
-    ellipse(m_racketX, m_racketY, m_racketSize.x, m_racketSize.y);
+      text("Player Served: " + isServed(), 300,30);
+      noFill();
+    }
+    /* ellipse(m_racketX, m_racketY, m_racketDiameter.x, m_racketSize.y); */
+    circle(m_racketX, m_racketY, m_racketDiameter);
 
-    
+
   }
-  
+
   void move(int x, int y){
-    m_racketX += x;
-    m_racketY += y;
-    m_x += x;
-    m_y += y;
+    m_racketX += x * getDeltaTime();
+    m_racketY += y * getDeltaTime();
+    m_x += x * getDeltaTime();
+    m_y += y * getDeltaTime();
   }
-  
+
   boolean checkHit(Ball b){
-    float radius = b.getBallDiameter()/2;    
-    if(CollisionCR(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketSize.x, m_racketSize.y)){
+    float radius = b.getBallDiameter()/2;
+    if(CollisionCC(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketDiameter/2)){
       return true;
     }
     return false;
@@ -148,7 +186,7 @@ class Player{
     return m_y;
   }
   PVector getSize(){
-    return m_size;
+    return m_size.copy();
   }
   int getFacing(){
     return m_facingDirection;
@@ -156,7 +194,14 @@ class Player{
   void setPos(float x, float y){
     m_x = x;
     m_y = y;
-    m_racketX = m_x - 15;
-    m_racketY = m_y - 10;
+    m_racketX = m_x - m_racketXOffset;
+    m_racketY = m_y - m_racketYOffset;
+  }
+  void setVel(float vx, float vy){
+    m_vel.x = vx;
+    m_vel.y = vy;
+  }
+  PVector getVel(){
+    return m_vel.copy();
   }
 }

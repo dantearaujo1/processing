@@ -6,19 +6,19 @@
 boolean CollisionCR(float cx, float cy, float r, float x, float y, float w, float h){
   float testX = cx;
   float testY = cy;
-  
+
   if(cx<x) testX = x;
   else if (cx>x+w) testX = x+w;
-  
+
   if(cy<y) testY = y;
   else if (cy>y+h) testY = y+h;
-  
+
   float dist = dist(cx,cy,testX,testY);
   if (dist < r){
     return true;
   }
   return false;
-  
+
 }
 
 boolean CollisionRR(float x1,float y1,float w1, float h1,float x2,float y2, float w2, float h2){
@@ -33,8 +33,8 @@ boolean CollisionRR(float x1,float y1,float w1, float h1,float x2,float y2, floa
 
 boolean CollisionCC(float cx1,float cy1, float r1, float cx2, float cy2, float r2){
     float dist = dist(cx1,cy1,cx2,cy2);
-    
-    if (dist < r1 + r1){
+
+    if (dist < r1 + r2){
       return true;
     }
     else {

@@ -8,7 +8,7 @@ class Net{
   Net(){
     m_x = 0;
     m_y = 0;
-    m_z = 7;
+    m_z = 12;
     m_size = new PVector();
   }
 
