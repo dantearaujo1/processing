@@ -39,7 +39,7 @@ void draw(){
   currentTime = millis()/1000.0f;
   deltaTime += currentTime - lastTime;
   lastTime = currentTime;
-  p.handleInput();
+  /* p.handleInput(); */
   // Update Loop
   if(deltaTime >= DT){
     deltaTime -= DT;
@@ -48,6 +48,9 @@ void draw(){
     b.setBallSide(c.getNet());
     p.update();
     p2.update();
+    if(b.checkEnd()){
+      setPoint(p,p2,b);
+    }
   }
 
   // Draw Loop
@@ -61,7 +64,7 @@ void draw(){
   textSize(36);
   scoreText = int(score.x) + " : " + int( score.y );
   text(scoreText, width/2 - textWidth(scoreText)/2, textDescent() + textAscent());
-  textSize(15);
+  textSize(12);
   popStyle();
 }
 
@@ -103,6 +106,18 @@ void keyPressed(){
     }
   }
   // PLAYER 1 INPUT
+  if(key == 'd'){
+    p.move(50,0);
+  }
+  if(key == 'a'){
+    p.move(-50,0);
+  }
+  if(key == 's'){
+    p.move(0,50);
+  }
+  if(key == 'w'){
+    p.move(0,-50);
+  }
   // PLAYER 2 INPUT
   if(key == 'l'){
     p2.move(50,0);
@@ -158,6 +173,14 @@ PVector getScore(Player p1, Player p2){
 
 void setPoint(Player p1, Player p2, Ball b){
     if (!b.isKicking() && b.isServed()){
-      
+      float side = b.getSide();
+      if (side == 1){
+        p1.m_score += 15;
+      }
+      else  {
+        p2.m_score += 15;
+      }
     }
 }
+
+

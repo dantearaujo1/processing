@@ -80,6 +80,7 @@ class Ball{
       m_y += m_vel.y * getDeltaTime();
       m_x += m_vel.x * getDeltaTime();
       checkOutOfBounds();
+      checkEnd();
     }
   }
   void draw(){
@@ -208,6 +209,9 @@ class Ball{
       m_side = 2;
     }
   }
+  int getSide(){
+    return m_side;
+  }
   void debug(){
       pushStyle();
       fill(0,255,0);
@@ -218,9 +222,10 @@ class Ball{
       text("Ball Radius: " + getBallDiameter()/2, 100,75);
       text("KickCount: " + m_kickCount, 0, 15);
       text("Ball Served: " + m_served, 0, 30);
-      text("Side: " + m_side, 0, 45);
-      text("DeltaTime: " + getDeltaTime(), 0, 45);
-      text("TotalTime: " + currentTime, 0, 60);
+      text("Ball Kicking: " + m_kicking, 0, 45);
+      text("Side: " + m_side, 0, 60);
+      text("DeltaTime: " + getDeltaTime(), 0, 75);
+      text("TotalTime: " + currentTime, 0, 90);
       popStyle();
 
   }
@@ -301,4 +306,11 @@ class Ball{
     /* return (check < 0.7) ? (m_diameter * 0.7) : (m_diameter * check); */
     return check;
   }
+  boolean checkEnd(){
+    if (m_served && !m_kicking){
+      return true;
+    }
+    return false;
+  }
 }
+

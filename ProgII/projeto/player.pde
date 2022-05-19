@@ -1,6 +1,6 @@
 
 
-class Player{
+class Player {
   float m_x;
   float m_y;
   PVector m_size;
@@ -55,21 +55,21 @@ class Player{
     m_size = new PVector(20,30);
     m_vel = new PVector(0,0);
     m_score = 0;
-
   }
+
   void handleInput(){
-    if(keyPressed && key == 'd'){
-      setVelX(100);
-    }
-    else if(keyPressed && key == 'a'){
-      setVelX(-100);
-    }
-    if(keyPressed && key == 'w'){
-      setVelY(-100);
-    }
-    else if(keyPressed && key == 's'){
-      setVelY(100);
-    }
+    /* if(keyPressed && key == 'd'){ */
+    /*   setVelX(100); */
+    /* } */
+    /* else if(keyPressed && key == 'a'){ */
+    /*   setVelX(-100); */
+    /* } */
+    /* if(keyPressed && key == 'w'){ */
+    /*   setVelY(-100); */
+    /* } */
+    /* else if(keyPressed && key == 's'){ */
+    /*   setVelY(100); */
+    /* } */
   }
 
   void hit(Ball b){
@@ -77,7 +77,7 @@ class Player{
 
       // If we are in serve state but did not hit the ball yet we should go here
       if(b.isServed() && !isServed()){
-        b.setVel(0,-200);
+        b.setVel(0,200 * m_facingDirection);
         b.setVelZ(m_power);
         setServe(true);
         return;
