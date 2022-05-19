@@ -20,6 +20,8 @@ class Player{
   boolean m_served;
   boolean m_shouldServe;
 
+  int m_score;
+
   Player(){
     m_x = width/2;
     m_y = height/2;
@@ -35,6 +37,7 @@ class Player{
     m_served = false;
     m_shouldServe = false;
     m_size = new PVector(20,30);
+    m_score = 0;
   }
   Player(float x, float y, int facing){
     m_x = x;
@@ -51,25 +54,21 @@ class Player{
     m_shouldServe = false;
     m_size = new PVector(20,30);
     m_vel = new PVector(0,0);
+    m_score = 0;
 
   }
   void handleInput(){
-    if(keyPressed){
-      if(key == 'd'){
-        setVel(100,m_vel.y);
-      }
-      if(key == 'a'){
-        setVel(-100,m_vel.y);
-      }
-      if(key == 'w'){
-        setVel(m_vel.x,-100);
-      }
-      if(key == 's'){
-        setVel(m_vel.x,100);
-      }
+    if(keyPressed && key == 'd'){
+      setVelX(100);
     }
-    else if (!keyPressed){
-
+    else if(keyPressed && key == 'a'){
+      setVelX(-100);
+    }
+    if(keyPressed && key == 'w'){
+      setVelY(-100);
+    }
+    else if(keyPressed && key == 's'){
+      setVelY(100);
     }
   }
 
@@ -78,7 +77,7 @@ class Player{
 
       // If we are in serve state but did not hit the ball yet we should go here
       if(b.isServed() && !isServed()){
-        b.setVel(0,200);
+        b.setVel(0,-200);
         b.setVelZ(m_power);
         setServe(true);
         return;
@@ -100,7 +99,11 @@ class Player{
       // Change ball direction
       // Using dot product to shoot foward
       // Direction should be -1;
-      float direction = b.getVel().copy().normalize().dot(0,m_facingDirection,0);
+      float direction = b.getVel().normalize().dot(0,m_facingDirection,0);
+      float angle = b.getVel().normalize().dot(m_vel)/(m_vel.mag()*b.getVel().mag());
+
+      println("Direction: " + direction);
+      println("Angle: " + angle);
       b.setVel(0,b.getVel().y * direction);
 
       // Reset our kickCount
@@ -147,9 +150,13 @@ class Player{
     rect(m_x, m_y, m_size.x, m_size.y);
     fill(122,0,0);
 
-    if(debug){
+    if(debug && m_facingDirection == -1){
+      fill(255);
       stroke(255);
       text("Player Served: " + isServed(), 300,30);
+      text("VelX: " + 100, 300,45);
+      text("VelY: " + getVel().y, 300,60);
+      text("Key: " + key, 300,75);
       noFill();
     }
     /* ellipse(m_racketX, m_racketY, m_racketDiameter.x, m_racketSize.y); */
@@ -199,6 +206,12 @@ class Player{
   }
   void setVel(float vx, float vy){
     m_vel.x = vx;
+    m_vel.y = vy;
+  }
+  void setVelX(float vx){
+    m_vel.x = vx;
+  }
+  void setVelY(float vy){
     m_vel.y = vy;
   }
   PVector getVel(){

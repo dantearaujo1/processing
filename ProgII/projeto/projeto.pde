@@ -10,18 +10,15 @@ Player p2;
 /* final float GRAVITY = 9.8; */
 final float GRAVITY = 98;
 boolean debug;
-float duration;
-float time;
 
 final float FRAME_RATE = 60.0f;
 final float DT = 1.0/FRAME_RATE;
 float deltaTime = 0.0f;
 float currentTime = 0.0f;
 float lastTime = 0.0f;
-float endTime = 0.0f;
-float startTime = 0.0f;
 
-
+PVector score;
+String scoreText;
 
 void setup(){
   size(800,800);
@@ -29,11 +26,10 @@ void setup(){
   b = new Ball(0,640,15);
   p = new Player(width/2, 620, -1);
   p2 = new Player(0, 0, 1);
+  score = new PVector(0,0);
 
   setServe(p2,p,b);
   /* setServe(p,p2,b); */
-  duration = 0.6;
-  time = 0;
   debug = false;
 }
 
@@ -60,6 +56,13 @@ void draw(){
   c.drawNet();
   b.draw();
   p.draw();
+
+  pushStyle();
+  textSize(36);
+  scoreText = int(score.x) + " : " + int( score.y );
+  text(scoreText, width/2 - textWidth(scoreText)/2, textDescent() + textAscent());
+  textSize(15);
+  popStyle();
 }
 
 void reset(){
@@ -68,16 +71,16 @@ void reset(){
 
 void keyReleased(){
       if(key == 'd'){
-        p.setVel(0,p.m_vel.y);
+        p.setVelX(0);
       }
       if(key == 'a'){
-        p.setVel(0,p.m_vel.y);
+        p.setVelX(0);
       }
       if(key == 'w'){
-        p.setVel(p.m_vel.x,0);
+        p.setVelY(0);
       }
       if(key == 's'){
-        p.setVel(p.m_vel.x,0);
+        p.setVelY(0);
       }
 }
 void keyPressed(){
@@ -93,12 +96,10 @@ void keyPressed(){
     if(key == ' '){
       /* p.hit(b); */
       b.setServe(true);
-      startTime = currentTime;
     }
     if(key == 'ç'){
       /* p2.hit(b); */
       b.setServe(true);
-      startTime = currentTime;
     }
   }
   // PLAYER 1 INPUT
@@ -148,4 +149,15 @@ float getDeltaTime(){
 }
 float getRealDeltaTime(){
   return deltaTime;
+}
+
+PVector getScore(Player p1, Player p2){
+  PVector result = new PVector(p1.m_score,p2.m_score);
+  return result;
+}
+
+void setPoint(Player p1, Player p2, Ball b){
+    if (!b.isKicking() && b.isServed()){
+      
+    }
 }
