@@ -41,3 +41,30 @@ boolean CollisionCC(float cx1,float cy1, float r1, float cx2, float cy2, float r
       return false;
     }
 }
+
+boolean CollisionPTrapeze(float px, float py, float angle, Vector[] pPoints){
+  // Basicamente checar se px está entre duas linhas de mesma altura porem
+  // anguladas e py está entre duas linhas horizontais de tamanhos diferentes
+  // e py está entre duas linhas de duas linhas angulares
+
+  // Se px for menor que offsetPx1 ta na esquerda e fora
+  // Se px for maior que offsetPx1 e menor que offsetPx2 ta dentro
+  // Se px for maior que offsetPx1 e offsetPx2 ta na direita e fora
+  // OffsetPx1 é o cateto oposto do triangulo ponto[0]hb
+  // OffsetPx1 é o cateto oposto do triangulo ponto[3]ad
+  // Temos a altura e o angulo de rotação podemos achar offsetPx1 utilizando
+  // tan(angulo) * altura = offset
+  // no caso de de offsetPx1 soma-se offsetPx1 ao ponto[0].x e chegamos ai ponto que queremos
+  // no caso de de offsetPx2 subtrai-se offsetPx1 ao ponto[3].x e chegamos ai ponto que queremos
+  /* boolean result = if(px < ) */
+  float distH = pPoints[0].m_y - py;
+  if(distH < 0 || distH > pPoints[0].m_y - pPoints[1].m_y){
+    return false;
+  }
+  float offset = distH * tan(radians(angle));
+  return (px >= pPoints[0].m_x + offset && px <= pPoints[3].m_x - offset);
+}
+boolean OnStraightSegment(float xi , float xn, float xf){
+  return (xn <= max(xi,xf) && xn >= min(xi,xf));
+}
+

@@ -7,8 +7,6 @@ Ball b;
 Court c;
 Player p;
 Player p2;
-/* final float GRAVITY = 9.8; */
-final float GRAVITY = 98;
 boolean debug;
 
 final float FRAME_RATE = 60.0f;
@@ -19,6 +17,7 @@ float lastTime = 0.0f;
 
 PVector score;
 String scoreText;
+
 
 void setup(){
   size(800,800);
@@ -39,15 +38,19 @@ void draw(){
   currentTime = millis()/1000.0f;
   deltaTime += currentTime - lastTime;
   lastTime = currentTime;
-  /* p.handleInput(); */
+
   // Update Loop
   if(deltaTime >= DT){
     deltaTime -= DT;
+
     b.update();
+    b.checkCourt(c);
     b.checkNet(c.getNet());
     b.setBallSide(c.getNet());
+
     p.update();
     p2.update();
+
     if(b.checkEnd()){
       setPoint(p,p2,b);
     }
@@ -56,38 +59,70 @@ void draw(){
   // Draw Loop
   c.draw();
   p2.draw();
-  c.drawNet();
-  b.draw();
+  if(b.m_side == 1){
+    b.draw();
+    c.drawNet();
+  }
+  else{
+    c.drawNet();
+    b.draw();
+  }
   p.draw();
+
 
   pushStyle();
   textSize(36);
+  score.x = p.m_score;
+  score.y = p2.m_score;
   scoreText = int(score.x) + " : " + int( score.y );
   text(scoreText, width/2 - textWidth(scoreText)/2, textDescent() + textAscent());
   textSize(12);
   popStyle();
 }
 
-void reset(){
-  setup();
+void reset(Player p1, Player p2, Ball b){
+  b.init(0,640,15);
+  p1.init(0,0,-1);
+  p2.init(0,0,1);
+  setServe(p1,p2,b);
 }
 
 void keyReleased(){
-      if(key == 'd'){
-        p.setVelX(0);
-      }
-      if(key == 'a'){
-        p.setVelX(0);
-      }
-      if(key == 'w'){
-        p.setVelY(0);
-      }
-      if(key == 's'){
-        p.setVelY(0);
-      }
+  if(key == 'd'){
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_RIGHT, false);
+    p.setVelX(0);
+  }
+  if(key == 'a'){
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_LEFT, false);
+    p.setVelX(0);
+  }
+  if(key == 's'){
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_DOWN, false);
+    p.setVelY(0);
+  }
+  if(key == 'w'){
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_UP, false);
+    p.setVelY(0);
+  }
+  if(key == 'l'){
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_RIGHT, false);
+    p2.setVelX(0);
+  }
+  if(key == 'j'){
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_LEFT, false);
+    p2.setVelX(0);
+  }
+  if(key == 'k'){
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_DOWN, false);
+    p2.setVelY(0);
+  }
+  if(key == 'i'){
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_UP, false);
+    p2.setVelY(0);
+  }
 }
 void keyPressed(){
-  if(b.isServed()){
+  if(b.isInGame() || b.isServed()){
     if(key == ' '){
       p.hit(b);
     }
@@ -97,63 +132,59 @@ void keyPressed(){
   }
   else{
     if(key == ' '){
-      /* p.hit(b); */
-      b.setServe(true);
+      b.startServeAnimation();
     }
     if(key == 'ç'){
-      /* p2.hit(b); */
-      b.setServe(true);
+      b.startServeAnimation();
     }
   }
   // PLAYER 1 INPUT
   if(key == 'd'){
-    p.move(50,0);
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_RIGHT, true);
   }
   if(key == 'a'){
-    p.move(-50,0);
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_LEFT, true);
   }
   if(key == 's'){
-    p.move(0,50);
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_DOWN, true);
   }
   if(key == 'w'){
-    p.move(0,-50);
+    p.m_movements.put(PLAYER_MOV_STATES.PLAYER_UP, true);
   }
   // PLAYER 2 INPUT
   if(key == 'l'){
-    p2.move(50,0);
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_RIGHT, true);
   }
   if(key == 'j'){
-    p2.move(-50,0);
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_LEFT, true);
   }
   if(key == 'k'){
-    p2.move(0,50);
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_DOWN, true);
   }
   if(key == 'i'){
-    p2.move(0,-50);
+    p2.m_movements.put(PLAYER_MOV_STATES.PLAYER_UP, true);
   }
 
   if(key == 'q'){
     debug = !debug;
   }
   if(key == 'r'){
-    reset();
+    reset(p,p2,b);
   }
 }
 
 void setServe(Player p1, Player p2, Ball p){
-  b.setServe(false);
-  b.setKicking(false);
   p1.setServe(false);
   p2.setServe(true);
+  b.startServing();
+  b.setLastHit(p1);
   if(p1.getFacing() == 1){
     p1.setPos(width/2, 130);
-    b.setPos(p1.getPosX() - 20, p1.getPosY() + 20);
     p2.setPos(width/2, 620);
 
   }
   else{
     p1.setPos(width/2, 620);
-    b.setPos(p1.getPosX() - 20, p1.getPosY() + 20);
     p2.setPos(width/2, 130);
 
   }
@@ -172,15 +203,14 @@ PVector getScore(Player p1, Player p2){
 }
 
 void setPoint(Player p1, Player p2, Ball b){
-    if (!b.isKicking() && b.isServed()){
-      float side = b.getSide();
-      if (side == 1){
-        p1.m_score += 15;
-      }
-      else  {
-        p2.m_score += 15;
-      }
-    }
+  float side = b.getSide();
+  if (side == 1){
+    p1.m_score += 15;
+  }
+  else  {
+    p2.m_score += 15;
+  }
+  setServe(p1,p2,b);
 }
 
 

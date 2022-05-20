@@ -1,23 +1,25 @@
+class Vector{
+  float m_x;
+  float m_y;
+
+  Vector(float x, float y){
+    m_x = x;
+    m_y = y;
+  }
+}
 
 class Court{
   Vector[]  m_vertices;
   Net       m_net;
+  int       m_angle;
 
-  class Vector{
-    float m_x;
-    float m_y;
-
-    Vector(float x, float y){
-      m_x = x;
-      m_y = y;
-    }
-  }
 
   Court(){
     // Creating Vertices Vector
+    m_angle = 20;
     m_vertices = new Vector[4];
     float courtHeight = 0.6 * height;
-    float offsetX = tan(radians(20)) * courtHeight;
+    float offsetX = tan(radians(m_angle)) * courtHeight;
 
     // Setting Vertices Vector points;
     m_vertices[0] = new Vector(0.1 * width, 0.8 * height);
@@ -31,6 +33,9 @@ class Court{
     // Setting Net Size and Positioning
     m_net.setPos((m_vertices[0].m_x + m_vertices[1].m_x)/2, (m_vertices[0].m_y + m_vertices[1].m_y)/2 );
     m_net.setSize((m_vertices[2].m_x + m_vertices[3].m_x)/2 - m_net.getPosX(), 40);
+  }
+  void update(Ball b){
+    
   }
 
   void draw(){
@@ -50,5 +55,11 @@ class Court{
 
   Net getNet(){
     return m_net;
+  }
+  Vector[] getVertices(){
+    return m_vertices;
+  }
+  int getAngle(){
+    return m_angle;
   }
 }
