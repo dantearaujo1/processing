@@ -131,6 +131,8 @@ class Ball{
       m_currentHeight += m_velZ * getDeltaTime();
 
       // We to low, we should stop
+      // Probably m_currentMaxHeight never going down to 1
+      // With small numbers of BALL_MAX_KICKS
       if (m_currentMaxHeight <= 1 || m_kickCount >= BALL_MAX_KICKS){
         m_states = STATES.GAME_POINT;
         m_kickCount = 0;
@@ -223,6 +225,7 @@ class Ball{
       }
     }
   }
+
   void checkCourt(Court c){
     PVector pos = getBallPosition();
     if(!CollisionPTrapeze(pos.x,pos.y,c.getAngle(),c.getVertices()) && m_currentHeight == 0){

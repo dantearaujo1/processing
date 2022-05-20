@@ -27,8 +27,8 @@ void setup(){
   p2 = new Player(0, 0, 1);
   score = new PVector(0,0);
 
-  setServe(p2,p,b);
-  /* setServe(p,p2,b); */
+  /* setServe(p2,p,b); */
+  setServe(p,p2,b);
   debug = false;
 }
 
@@ -202,13 +202,30 @@ PVector getScore(Player p1, Player p2){
   return result;
 }
 
+// WARN: Not working yet
 void setPoint(Player p1, Player p2, Ball b){
   float side = b.getSide();
-  if (side == 1){
-    p1.m_score += 15;
+  if (side == 1 && b.getLastHit() == p1 || side == 1 && b.getLastHit() == p2){
+    if(p1.getScore() >= 45 && p2.getScore() != 45){
+      p1.setScore(0);
+    }
+    else if (p1.getScore() == 45 && p2.getScore() == 45){
+      //DEUXE
+    }
+    else{
+      p1.addScore(15);
+    }
   }
   else  {
-    p2.m_score += 15;
+    if(p2.getScore() >= 45 && p1.getScore() != 45){
+      p2.setScore(0);
+    }
+    else if (p2.getScore() == 45 && p1.getScore() == 45){
+      //DEUCE
+    }
+    else{
+      p2.addScore(15);
+    }
   }
   setServe(p1,p2,b);
 }

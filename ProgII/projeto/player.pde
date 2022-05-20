@@ -262,4 +262,13 @@ class Player {
   PVector getVel(){
     return m_vel.copy();
   }
+  int getScore(){
+    return m_score;
+  }
+  void setScore(int score){
+    m_score = score;
+  }
+  void addScore(int amount){
+    m_score += amount;
+  }
 }
