@@ -54,40 +54,48 @@ void draw(){
 
   // Reference
   showGrid(50,50);
+  
+  // Drawing bakery
   fill(0,0,122);
   rect(width/2,height/2, 60,45);
   fill(122,122,122);
   rect(width/2,height/2 , 60,15);
+  fill(255,0,0);
+  pushStyle();
+  textSize(16);
+  text("PADARIA", width/2, height/2);
+  popStyle();
+
   if (!get){
-    fill(0,255,0);
-    circle(width/2 + 15,height/2 + 30 , 15);
+
     fill(255,0,0);
+
+    // Draw Arrow
     line (x - 7, height/2 - 2, x + 15, height/2 - 2);
     triangle(x + 15, height/2 - 4, x + 15, height/2, x + 19, height/2 -2);
     pushStyle();
     textSize(12);
     text("vx: " + vx + " m/s", x + 25, height/2 - 2);
     popStyle();
+
     circle(x,height/2 + 30, 15);
   }
   else{
     fill(0,255,0);
     circle(x,height/2 + 30, 15);
+
+    // Draw Arrow
     line (x - 7, height/2 - 2, x + 15, height/2 - 2);
     triangle(x -7, height/2 - 4, x -7, height/2, x -11, height/2 -2);
     pushStyle();
     textSize(12);
     text("vx: " + vx + " m/s", x + 25, height/2 - 2);
     popStyle();
+
   }
-  fill(255,0,0);
-  pushStyle();
-  textSize(16);
-  text("PADARIA", width/2, height/2);
-  popStyle();
-  drawGraph(100,100,positions, "SxT");
-  drawGraph(300,100,velocitys, "VXT");
-  drawGraph(500,100,acceleration, "AXT");
+  drawGraph(500,100,positions, "SxT");
+  drawGraph(500,300,velocitys, "VXT");
+  drawGraph(700,200,acceleration, "AXT");
 
 
   if(fired){
@@ -122,7 +130,7 @@ void draw(){
     get = true;
   }
   if (vx <= 0 && stopping == true){
-    ax = -10;
+    ax = -50;
   }
   if (x < 0 ){
     fired = false;
@@ -164,11 +172,14 @@ void showGrid(int refX, int refY){
 void drawGraph(int offsetX, int offsetY, PVector[] points, String tex){
   int x0 = offsetX;
   int y0 = offsetY + 100;
+  stroke(255);
   line(x0, y0, x0, offsetY );
   line(x0, y0, x0 + 100, y0 );
+  fill(255);
+  noStroke();
   for (int i = 0; i < points.length; i++){
     if(points[i] != null){
-      circle(x0 + points[i].x + i * 10, y0 - points[i].y / 10, 5);
+      circle(x0 + points[i].x + i * 10, y0 - points[i].y / 5, 5);
 
     }
   }
