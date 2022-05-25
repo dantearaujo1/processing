@@ -27,13 +27,13 @@ void setup(){
   p2 = new Player(0, 0, 1);
   score = new PVector(0,0);
 
-  /* setServe(p2,p,b); */
-  setServe(p,p2,b);
+  setServe(p2,p,b);
+  /* setServe(p,p2,b); */
   debug = false;
 }
 
 void draw(){
-  background(0);
+  background(0,122,0);
 
   currentTime = millis()/1000.0f;
   deltaTime += currentTime - lastTime;
@@ -49,7 +49,9 @@ void draw(){
     b.setBallSide(c.getNet());
 
     p.update();
+    p.checkNetCollision(c.getNet());
     p2.update();
+    p2.checkNetCollision(c.getNet());
 
     if(b.checkEnd()){
       setPoint(p,p2,b);
@@ -126,7 +128,7 @@ void keyPressed(){
     if(key == ' '){
       p.hit(b);
     }
-    if(key == 'ç'){
+    if(key == 'n'){
       p2.hit(b);
     }
   }
@@ -134,7 +136,7 @@ void keyPressed(){
     if(key == ' '){
       b.startServeAnimation();
     }
-    if(key == 'ç'){
+    if(key == 'n'){
       b.startServeAnimation();
     }
   }
@@ -174,10 +176,10 @@ void keyPressed(){
 }
 
 void setServe(Player p1, Player p2, Ball p){
-  p1.setServe(false);
-  p2.setServe(true);
   b.startServing();
   b.setLastHit(p1);
+  p1.setServeStatus();
+  p2.setRecieveStatus();
   if(p1.getFacing() == 1){
     p1.setPos(width/2, 130);
     p2.setPos(width/2, 620);
