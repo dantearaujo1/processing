@@ -3,93 +3,27 @@
     just setup functions and our "gameLoop"
 */
 
-Ball b;
-Court c;
-Player p;
-Player p2;
-boolean debug;
-
-final float FRAME_RATE = 60.0f;
-final float DT = 1.0/FRAME_RATE;
-float deltaTime = 0.0f;
-float currentTime = 0.0f;
-float lastTime = 0.0f;
-
-PVector score;
-String scoreText;
-
+Game game;
 
 void setup(){
   size(800,800);
-  c = new Court();
-  b = new Ball(0,640,15);
-  p = new Player(width/2, 620, -1);
-  p2 = new Player(0, 0, 1);
-  score = new PVector(0,0);
-
-  setServe(p2,p,b);
-  /* setServe(p,p2,b); */
-  debug = false;
+  game = new Game();
 }
-
 void draw(){
   background(0,122,0);
-
-  currentTime = millis()/1000.0f;
-  deltaTime += currentTime - lastTime;
-  lastTime = currentTime;
-
-  // Update Loop
-  if(deltaTime >= DT){
-    deltaTime -= DT;
-
-    b.update();
-    b.checkCourt(c);
-    b.checkNet(c.getNet());
-    b.setBallSide(c.getNet());
-
-    p.update();
-    p.checkNetCollision(c.getNet());
-    p2.update();
-    p2.checkNetCollision(c.getNet());
-
-    if(b.checkEnd()){
-      setPoint(p,p2,b);
-    }
-  }
-
-  // Draw Loop
-  c.draw();
-  p2.draw();
-  if(b.m_side == 1){
-    b.draw();
-    c.drawNet();
-  }
-  else{
-    c.drawNet();
-    b.draw();
-  }
-  p.draw();
-
-
-  pushStyle();
-  textSize(36);
-  score.x = p.m_score;
-  score.y = p2.m_score;
-  scoreText = int(score.x) + " : " + int( score.y );
-  text(scoreText, width/2 - textWidth(scoreText)/2, textDescent() + textAscent());
-  textSize(12);
-  popStyle();
+  game.run();
 }
 
 void reset(Player p1, Player p2, Ball b){
   b.init(0,640,15);
   p1.init(0,0,-1);
   p2.init(0,0,1);
-  setServe(p1,p2,b);
+  game.startServe(p1,p2,b);
 }
 
 void keyReleased(){
+  Player p = game.getPlayer(1);
+  Player p2 = game.getPlayer(2);
   if(key == 'd'){
     p.m_movements.put(PLAYER_MOV_STATES.PLAYER_RIGHT, false);
     p.setVelX(0);
@@ -124,20 +58,35 @@ void keyReleased(){
   }
 }
 void keyPressed(){
-  if(b.isInGame() || b.isServed()){
+  Player p = game.getPlayer(1);
+  Player p2 = game.getPlayer(2);
+  Ball b = game.getBall();
+  Court c = game.getCourt();
+
+  if(game.shouldStartServing()){
     if(key == ' '){
-      p.hit(b);
+      game.startServing(p,b);
     }
     if(key == 'n'){
-      p2.hit(b);
+      game.startServing(p2,b);
+    }
+  }
+  else if (game.isServing()){
+    if(key == ' '){
+      p.hit(b,c);
+      game.setState(GAME_STATES.GAME_FIRSTHIT);
+    }
+    if(key == 'n'){
+      p2.hit(b,c);
+      game.setState(GAME_STATES.GAME_FIRSTHIT);
     }
   }
   else{
     if(key == ' '){
-      b.startServeAnimation();
+      p.hit(b,c);
     }
     if(key == 'n'){
-      b.startServeAnimation();
+      p2.hit(b,c);
     }
   }
   // PLAYER 1 INPUT
@@ -168,27 +117,16 @@ void keyPressed(){
   }
 
   if(key == 'q'){
-    debug = !debug;
+    game.changeDebug();
   }
   if(key == 'r'){
     reset(p,p2,b);
   }
-}
-
-void setServe(Player p1, Player p2, Ball p){
-  b.startServing();
-  b.setLastHit(p1);
-  p1.setServeStatus();
-  p2.setRecieveStatus();
-  if(p1.getFacing() == 1){
-    p1.setPos(width/2, 130);
-    p2.setPos(width/2, 620);
-
+  if(key == 'e'){
+    game.setPoint(p,p2,b);
   }
-  else{
-    p1.setPos(width/2, 620);
-    p2.setPos(width/2, 130);
-
+  if(key == 'f'){
+    game.setPoint(p,p2,b);
   }
 }
 
@@ -196,40 +134,12 @@ float getDeltaTime(){
   return DT;
 }
 float getRealDeltaTime(){
-  return deltaTime;
+  return game.m_deltaTime;
+}
+boolean getDebug(){
+  return game.m_debug;
 }
 
-PVector getScore(Player p1, Player p2){
-  PVector result = new PVector(p1.m_score,p2.m_score);
-  return result;
-}
 
-// WARN: Not working yet
-void setPoint(Player p1, Player p2, Ball b){
-  float side = b.getSide();
-  if (side == 1 && b.getLastHit() == p1 || side == 1 && b.getLastHit() == p2){
-    if(p1.getScore() >= 45 && p2.getScore() != 45){
-      p1.setScore(0);
-    }
-    else if (p1.getScore() == 45 && p2.getScore() == 45){
-      //DEUXE
-    }
-    else{
-      p1.addScore(15);
-    }
-  }
-  else  {
-    if(p2.getScore() >= 45 && p1.getScore() != 45){
-      p2.setScore(0);
-    }
-    else if (p2.getScore() == 45 && p1.getScore() == 45){
-      //DEUCE
-    }
-    else{
-      p2.addScore(15);
-    }
-  }
-  setServe(p1,p2,b);
-}
 
 

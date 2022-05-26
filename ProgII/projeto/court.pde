@@ -34,9 +34,6 @@ class Court{
     m_net.setPos((m_vertices[0].m_x + m_vertices[1].m_x)/2, (m_vertices[0].m_y + m_vertices[1].m_y)/2 );
     m_net.setSize((m_vertices[2].m_x + m_vertices[3].m_x)/2 - m_net.getPosX(), 40);
   }
-  void update(Ball b){
-    
-  }
 
   void draw(){
     fill(0,0,70);

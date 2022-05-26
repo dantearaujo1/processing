@@ -3,19 +3,14 @@
    the ball height in a 2D canvas
    */
 
-enum STATES{
-    GAME_POINT,
-    GAME_PLAYING,
-    GAME_SERVING,
-    GAME_FIRSTHIT,
-    ANIM_SERVE,
-}
-
 class Ball{
 
   float   m_x;
   float   m_y;
   int     m_diameter;
+
+  float   m_shadowX;
+  float   m_shadowY;
 
   PVector m_vel;
   float   m_velZ;
@@ -28,7 +23,7 @@ class Ball{
   // Ball States
   int     m_side;
   boolean m_showShadow;
-  STATES  m_states;
+  BALL_STATES m_state;
 
   float serveKickDuration;
   float elapsedTime;
@@ -50,7 +45,7 @@ class Ball{
 
     serveKickDuration = 0.6;
     elapsedTime = 0;
-    m_states = STATES.GAME_SERVING;
+    m_state = BALL_STATES.BALL_STOPPED;
   }
 
   // Constructor 2 overload
@@ -68,7 +63,6 @@ class Ball{
 
     serveKickDuration = 0.6;
     elapsedTime = 0;
-    m_states = STATES.GAME_SERVING;
   }
 
   void init(float x, float y, int d){
@@ -77,7 +71,7 @@ class Ball{
     m_diameter = d;
     m_color = color(190,190,0);
     m_vel = new PVector(0,0);
-    m_velZ = 70;
+    m_velZ = 2;
 
     m_currentMaxHeight = BALL_MAX_HEIGHT;
     m_currentHeight = 0;
@@ -85,17 +79,18 @@ class Ball{
 
     serveKickDuration = 0.6;
     elapsedTime = 0;
-    m_states = STATES.GAME_SERVING;
+    m_state = BALL_STATES.BALL_SERVE;
   }
 
-  void update(){
-    if(m_states == STATES.GAME_SERVING){
+  void update(Game g){
+    if(g.shouldStartServing()){
       kickBallAnimation();
     }
-    else if (m_states == STATES.ANIM_SERVE){
+    else if (g.isServing()){
       simulateThrow(); // This makes the ball Z thrust up and start our game going
+      g.endServing();
     }
-    else if(m_states == STATES.GAME_PLAYING || m_states == STATES.GAME_FIRSTHIT){
+    else if(g.isInGame() || g.isFirstHit()){
       simulateHeight();
       m_y += m_vel.y * getDeltaTime();
       m_x += m_vel.x * getDeltaTime();
@@ -122,7 +117,7 @@ class Ball{
 
   void simulateThrow(){
     m_velZ = 116; // MAGIC NUMBER
-    m_states = STATES.GAME_FIRSTHIT;
+    m_state = BALL_STATES.BALL_SERVING;
   }
 
   void simulateHeight(){
@@ -134,7 +129,7 @@ class Ball{
       // Probably m_currentMaxHeight never going down to 1
       // With small numbers of BALL_MAX_KICKS
       if (m_currentMaxHeight <= 1 || m_kickCount >= BALL_MAX_KICKS){
-        m_states = STATES.GAME_POINT;
+        m_state = BALL_STATES.BALL_STOPPED;
         m_kickCount = 0;
         return;
       }
@@ -154,9 +149,9 @@ class Ball{
 
     // Getting a percentage of the distance between ball current fake height
     // and currentMaxHeight
-    float shadowPercentage = m_currentHeight/BALL_MAX_HEIGHT;
+    float shadowPercentage = 1 - m_currentHeight/BALL_MAX_HEIGHT;
     float shadowFullSize = m_diameter * SHADOW_FULL_PERCENTAGE;
-    float shadowSize = shadowFullSize ;
+    float shadowSize = shadowFullSize * shadowPercentage;
 
     float ballIncreasePercentage = BALL_MINIMUM_PERCENTAGE + m_currentHeight/70;
     float ballFullSize = m_diameter;
@@ -165,19 +160,22 @@ class Ball{
     // Drawing shadow first so it go behind the ball fill(140);
     pushStyle();
     noStroke();
-    /* fill(100,100,100,(1-m_currentHeight/BALL_ANIMATION_MAX_HEIGHT) * 255); */
-    fill(100,100,100,(1-m_currentHeight/(BALL_MAX_HEIGHT + BALL_ANIMATION_MAX_HEIGHT)) * 255);
-    fill(0,0,0);
+    fill(20,20,20,(1-m_currentHeight/(BALL_MAX_HEIGHT + BALL_ANIMATION_MAX_HEIGHT)) * 255);
+    /* fill(0,0,0); */
     circle(m_x,m_y+ shadowSize/2,shadowSize);
 
     // Drawing the ball
     fill(m_color);
     circle(m_x,m_y - m_currentHeight,ballSize);
     popStyle();
+    if(m_state == BALL_STATES.BALL_OUT || m_state == BALL_STATES.BALL_STOPPED){
+      fill(20,20,20);
+      circle(m_shadowX,m_shadowY+ m_diameter/2,m_diameter);
+    }
 
     // Debug ball information
-    if(debug){
-      debug();
+    if(getDebug()){
+      debug(550,0);
     }
   }
 
@@ -194,25 +192,29 @@ class Ball{
     if(ballPos.y + check > height){
       setBallPosition(m_x, height - check);
       m_vel.y *= -1;
+      m_kickCount += 1;
     }
     if(ballPos.y - check < 0){
       setBallPosition(m_x, check);
       m_vel.y *= -1;
+      m_kickCount += 1;
     }
     if(ballPos.x + check > width){
       setBallPosition(width - check, m_y + m_currentHeight);
       m_vel.x *= -1;
+      m_kickCount += 1;
     }
     if(ballPos.x - check < 0){
       setBallPosition(check, m_y + m_currentHeight);
       m_x = check;
       m_vel.x *= -1;
+      m_kickCount += 1;
     }
   }
 
   void checkNet(Net n){
 
-    if (n.getZ() >= m_currentHeight && m_states == STATES.GAME_PLAYING){
+    if (n.getZ() >= m_currentHeight && m_state == BALL_STATES.BALL_PLAYING){
       float radius = getBallDiameter() / 2 ;
       if(!CollisionCR(m_x,m_y,radius,n.getPosX(),n.getPosY()-n.getHeight(),n.getWidth(),n.getHeight())){
         return;
@@ -221,7 +223,7 @@ class Ball{
         m_currentHeight = 0;
         m_y = n.getPosY() - radius;
         m_currentMaxHeight = 0.1;
-        m_states = STATES.GAME_POINT;
+        m_state = BALL_STATES.BALL_STOPPED;
       }
     }
   }
@@ -229,9 +231,12 @@ class Ball{
   void checkCourt(Court c){
     PVector pos = getBallPosition();
     if(!CollisionPTrapeze(pos.x,pos.y,c.getAngle(),c.getVertices()) && m_currentHeight == 0){
-      if(m_states == STATES.GAME_PLAYING){
-        m_states = STATES.GAME_POINT;
+      if(m_state == BALL_STATES.BALL_PLAYING){
+        m_state = BALL_STATES.BALL_OUT;
       }
+    }
+    else{
+
     }
   }
   // SOME GETTERS AND SETTERS ======================================================
@@ -309,36 +314,31 @@ class Ball{
     float check = BALL_MINIMUM_PERCENTAGE + m_currentHeight/BALL_MAX_HEIGHT;
     return check;
   }
-  boolean checkEnd(){
-    return (m_states == STATES.GAME_POINT);
+  boolean hasEnd(){
+    return (m_state == BALL_STATES.BALL_OUT || m_state == BALL_STATES.BALL_STOPPED);
   }
   boolean isInGame(){
-    return (m_states == STATES.GAME_PLAYING);
+    return (m_state == BALL_STATES.BALL_PLAYING);
   }
   boolean isServed(){
-    return (m_states == STATES.GAME_FIRSTHIT);
+    return (m_state == BALL_STATES.BALL_SERVING);
   }
-  void startServeAnimation(){
-    m_states = STATES.ANIM_SERVE;
-  }
-  void startServing(){
+  void startServe(){
     init(0,640,15);
   }
 
-  void debug(){
+  void debug(int atX, int atY){
       pushStyle();
       fill(0,255,0);
-      text("Ball Position: " + m_x + "," + (m_y - m_currentHeight) , 100,15);
-      text("Fake height: " + m_currentHeight, 100,30 );
-      text("MaxCurrentHeight: " + m_currentMaxHeight, 100,45);
-      text("Vel Z: " + m_velZ, 100, 60);
-      text("Ball Radius: " + getBallDiameter()/2, 100,75);
-      text("Ball END: " + checkEnd(), 0, 30);
-      text("Ball STATE: " + m_states, 0, 90);
-      text("KickCount: " + m_kickCount, 0, 15);
-      text("Side: " + m_side, 0, 45);
-      text("DeltaTime: " + nfs(getDeltaTime(),0,3), 0, 60);
-      text("TotalTime: " + currentTime, 0, 75);
+      text("Ball Position: " + m_x + "," + (m_y - m_currentHeight) , atX, atY + 15);
+      text("MaxCurrentHeight: " + m_currentMaxHeight, atX,atY + 30);
+      text("Z height: " + m_currentHeight, atX,atY + 45 );
+      text("Vel Z: " + m_velZ, atX, atY + 60);
+      text("Ball Radius: " + getBallDiameter()/2, atX,atY + 75);
+      text("Ball state: " + m_state, atX, atY + 90);
+      text("KickCount: " + m_kickCount, atX, atY + 105);
+      text("Side: " + m_side, atX, atY + 120);
+      text("LastHit: " + m_lastHit, atX, atY + 135);
       popStyle();
 
   }
