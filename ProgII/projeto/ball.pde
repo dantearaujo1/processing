@@ -45,7 +45,7 @@ class Ball{
 
     serveKickDuration = 0.6;
     elapsedTime = 0;
-    m_state = BALL_STATES.BALL_STOPPED;
+    m_state = BALL_STATES.STOPPED;
   }
 
   // Constructor 2 overload
@@ -79,7 +79,7 @@ class Ball{
 
     serveKickDuration = 0.6;
     elapsedTime = 0;
-    m_state = BALL_STATES.BALL_SERVE;
+    m_state = BALL_STATES.SERVE;
   }
 
   void update(Game g){
@@ -117,7 +117,7 @@ class Ball{
 
   void simulateThrow(){
     m_velZ = 116; // MAGIC NUMBER
-    m_state = BALL_STATES.BALL_SERVING;
+    m_state = BALL_STATES.SERVING;
   }
 
   void simulateHeight(){
@@ -129,7 +129,7 @@ class Ball{
       // Probably m_currentMaxHeight never going down to 1
       // With small numbers of BALL_MAX_KICKS
       if (m_currentMaxHeight <= 1 || m_kickCount >= BALL_MAX_KICKS){
-        m_state = BALL_STATES.BALL_STOPPED;
+        m_state = BALL_STATES.STOPPED;
         m_kickCount = 0;
         return;
       }
@@ -168,7 +168,7 @@ class Ball{
     fill(m_color);
     circle(m_x,m_y - m_currentHeight,ballSize);
     popStyle();
-    if(m_state == BALL_STATES.BALL_OUT || m_state == BALL_STATES.BALL_STOPPED){
+    if(m_state == BALL_STATES.OUT || m_state == BALL_STATES.STOPPED){
       fill(20,20,20);
       circle(m_shadowX,m_shadowY+ m_diameter/2,m_diameter);
     }
@@ -214,7 +214,7 @@ class Ball{
 
   void checkNet(Net n){
 
-    if (n.getZ() >= m_currentHeight && m_state == BALL_STATES.BALL_PLAYING){
+    if (n.getZ() >= m_currentHeight && m_state == BALL_STATES.PLAYING){
       float radius = getBallDiameter() / 2 ;
       if(!CollisionCR(m_x,m_y,radius,n.getPosX(),n.getPosY()-n.getHeight(),n.getWidth(),n.getHeight())){
         return;
@@ -223,7 +223,7 @@ class Ball{
         m_currentHeight = 0;
         m_y = n.getPosY() - radius;
         m_currentMaxHeight = 0.1;
-        m_state = BALL_STATES.BALL_STOPPED;
+        m_state = BALL_STATES.STOPPED;
       }
     }
   }
@@ -231,8 +231,8 @@ class Ball{
   void checkCourt(Court c){
     PVector pos = getBallPosition();
     if(!CollisionPTrapeze(pos.x,pos.y,c.getAngle(),c.getVertices()) && m_currentHeight == 0){
-      if(m_state == BALL_STATES.BALL_PLAYING){
-        m_state = BALL_STATES.BALL_OUT;
+      if(m_state == BALL_STATES.PLAYING){
+        m_state = BALL_STATES.OUT;
       }
     }
     else{
@@ -315,13 +315,13 @@ class Ball{
     return check;
   }
   boolean hasEnd(){
-    return (m_state == BALL_STATES.BALL_OUT || m_state == BALL_STATES.BALL_STOPPED);
+    return (m_state == BALL_STATES.OUT || m_state == BALL_STATES.STOPPED);
   }
   boolean isInGame(){
-    return (m_state == BALL_STATES.BALL_PLAYING);
+    return (m_state == BALL_STATES.PLAYING);
   }
   boolean isServed(){
-    return (m_state == BALL_STATES.BALL_SERVING);
+    return (m_state == BALL_STATES.SERVING);
   }
   void startServe(){
     init(0,640,15);

@@ -12,6 +12,7 @@ class Player {
   int     m_score;
   int     m_games;
   int     m_sets;
+  String  m_name;
 
   float   m_racketX;
   float   m_racketY;
@@ -26,7 +27,6 @@ class Player {
   float   m_maxShootPower;
 
 
-  HashMap<PLAYER_MOV_STATES,Boolean>  m_movements;
   HashMap<PLAYER_STATES, Boolean>     m_states;
 
 
@@ -41,6 +41,7 @@ class Player {
     m_racketDiameter = 30;
     setSide(1);
 
+    m_name = "Player ";
     m_maxVel = new PVector(100,200);
     m_currentVel = new PVector(0,0);
     m_size = new PVector(20,30);
@@ -50,7 +51,6 @@ class Player {
     m_sets = 0;
     m_score = 0;
 
-    m_movements = new HashMap<PLAYER_MOV_STATES,Boolean>();
     m_states = new HashMap<PLAYER_STATES,Boolean>();
     initStates();
 
@@ -65,6 +65,7 @@ class Player {
     m_racketHeight = 35;
     m_racketDiameter = 30;
     setSide(side);
+    m_name = "Player ";
 
     m_size = new PVector(20,30);
     m_maxVel = new PVector(250,200);
@@ -75,7 +76,6 @@ class Player {
     m_score = 0;
     m_sets = 0;
 
-    m_movements = new HashMap<PLAYER_MOV_STATES,Boolean>();;
     m_states = new HashMap<PLAYER_STATES,Boolean>();
     initStates();
   }
@@ -89,15 +89,15 @@ class Player {
     initStates();
   }
   void initStates(){
-    m_movements.put(PLAYER_MOV_STATES.PLAYER_LEFT,false);
-    m_movements.put(PLAYER_MOV_STATES.PLAYER_UP,false);
-    m_movements.put(PLAYER_MOV_STATES.PLAYER_DOWN,false);
-    m_movements.put(PLAYER_MOV_STATES.PLAYER_RIGHT,false);
-    m_states.put(PLAYER_STATES.PLAYER_SERVING,true);
-    m_states.put(PLAYER_STATES.PLAYER_RECIEVING,false);
-    m_states.put(PLAYER_STATES.PLAYER_PLAYING,false);
-    m_states.put(PLAYER_STATES.PLAYER_WINNING,false);
-    m_states.put(PLAYER_STATES.PLAYER_LOSING,false);
+    m_states.put(PLAYER_STATES.LEFT,false);
+    m_states.put(PLAYER_STATES.UP,false);
+    m_states.put(PLAYER_STATES.RIGHT,false);
+    m_states.put(PLAYER_STATES.DOWN,false);
+    m_states.put(PLAYER_STATES.SERVING,true);
+    m_states.put(PLAYER_STATES.RECIEVING,false);
+    m_states.put(PLAYER_STATES.PLAYING,false);
+    m_states.put(PLAYER_STATES.WINNING,false);
+    m_states.put(PLAYER_STATES.LOSING,false);
   }
 
   void hit(Ball b, Court c){
@@ -148,8 +148,8 @@ class Player {
         b.setVel(direction.x,direction.y);
         /* b.setVel(x,y); */
         b.setVelZ(result);
-        b.m_state = BALL_STATES.BALL_PLAYING;
-        m_states.put(PLAYER_STATES.PLAYER_PLAYING,true);
+        b.m_state = BALL_STATES.PLAYING;
+        m_states.put(PLAYER_STATES.PLAYING,true);
         return;
       }
 
@@ -164,17 +164,17 @@ class Player {
   }
 
   void update(){
-    boolean condition = (!m_states.get(PLAYER_STATES.PLAYER_SERVING) || m_states.get(PLAYER_STATES.PLAYER_PLAYING));
-    if (m_movements.get(PLAYER_MOV_STATES.PLAYER_LEFT)){
+    boolean condition = (!m_states.get(PLAYER_STATES.SERVING) || m_states.get(PLAYER_STATES.PLAYING));
+    if (m_states.get(PLAYER_STATES.LEFT)){
       m_currentVel.x = -m_maxVel.x;
     }
-    if (m_movements.get(PLAYER_MOV_STATES.PLAYER_RIGHT)){
+    if (m_states.get(PLAYER_STATES.RIGHT)){
       m_currentVel.x = m_maxVel.x;
     }
-    if (m_movements.get(PLAYER_MOV_STATES.PLAYER_UP) && condition){
+    if (m_states.get(PLAYER_STATES.UP) && condition){
       m_currentVel.y = -m_maxVel.y;
     }
-    if (m_movements.get(PLAYER_MOV_STATES.PLAYER_DOWN) && condition){
+    if (m_states.get(PLAYER_STATES.DOWN) && condition){
       m_currentVel.y = m_maxVel.y;
     }
 
@@ -207,12 +207,13 @@ class Player {
   }
 
   void drawDebug(int atX, int atY){
+    text(m_name , m_x + 10, m_y - m_size.x );
     text("Side: " + m_side , atX, atY + 15);
     text("Points: " + m_score , atX, atY + 30);
     text("Games: " + m_games , atX, atY + 45);
     text("Sets: " + m_sets , atX, atY + 60);
-    text("Serving: " + m_states.get(PLAYER_STATES.PLAYER_SERVING) , atX, atY + 75);
-    text("Recieving: " + m_states.get(PLAYER_STATES.PLAYER_RECIEVING) , atX, atY + 90);
+    text("Serving: " + m_states.get(PLAYER_STATES.SERVING) , atX, atY + 75);
+    text("Recieving: " + m_states.get(PLAYER_STATES.RECIEVING) , atX, atY + 90);
   }
 
   void checkWindowCollision(){
@@ -337,14 +338,14 @@ class Player {
     }
   }
   void setServeStatus(){
-    m_states.put(PLAYER_STATES.PLAYER_SERVING,true);
-    m_states.put(PLAYER_STATES.PLAYER_RECIEVING,false);
-    m_states.put(PLAYER_STATES.PLAYER_PLAYING,false);
+    m_states.put(PLAYER_STATES.SERVING,true);
+    m_states.put(PLAYER_STATES.RECIEVING,false);
+    m_states.put(PLAYER_STATES.PLAYING,false);
   }
   void setRecieverStatus(){
-    m_states.put(PLAYER_STATES.PLAYER_SERVING,false);
-    m_states.put(PLAYER_STATES.PLAYER_RECIEVING,true);
-    m_states.put(PLAYER_STATES.PLAYER_PLAYING,false);
+    m_states.put(PLAYER_STATES.SERVING,false);
+    m_states.put(PLAYER_STATES.RECIEVING,true);
+    m_states.put(PLAYER_STATES.PLAYING,false);
   }
   void addScore(int amount){
     m_score += amount;

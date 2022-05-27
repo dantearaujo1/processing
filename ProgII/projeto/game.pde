@@ -28,11 +28,13 @@ class Game{
     m_ball =        new Ball(0,640,15);
     m_players =     new Player[4];
     m_players[0] =  new Player(width/2, 620,2);
+    m_players[0].m_name += 0;
     m_players[1] =  new Player(0,0,1);
+    m_players[1].m_name += 1;
     m_net =         m_court.getNet();
     m_state =       GAME_STATES.GAME_SERVE;
     m_debug =       false;
-    startServe(m_players[0],m_players[1],m_ball);
+    startServe(m_players[1],m_players[0],m_ball);
 
   }
 
@@ -171,12 +173,12 @@ class Game{
       serve.setFacing(1);
       reciever.setFacing(-1);
       if(option % 2 == 0){
-        serve.setPos(width/2 - width/4, 130);
-        reciever.setPos(width/2 + width/8, 620);
+        serve.setPos(width/2 - width/8, 130);
+        reciever.setPos(width/2 + width/4, 620);
       }
       else{
-        serve.setPos(width/2 + width/4, 130);
-        reciever.setPos(width/2 - width/8, 620);
+        serve.setPos(width/2 + width/8, 130);
+        reciever.setPos(width/2 - width/4, 620);
       }
     }
     else{
@@ -195,8 +197,8 @@ class Game{
   }
   void setPoint(Player p1, Player p2, Ball b){
     float side = b.getSide();
-    Player reciever = p1.getState(PLAYER_STATES.PLAYER_RECIEVING) ? p1 : p2;
-    Player server = p1.getState(PLAYER_STATES.PLAYER_SERVING) ? p1 : p2;
+    Player reciever = p1.getState(PLAYER_STATES.RECIEVING) ? p1 : p2;
+    Player server = p1.getState(PLAYER_STATES.SERVING) ? p1 : p2;
     // When we went to DEUCE MODE
     int difference = abs(p1.getScore() - p2.getScore());
     // This doesn't work when we have same points in advantage mode
@@ -208,6 +210,7 @@ class Game{
         p2.addScore(1);
       }
       difference = abs(p1.getScore() - p2.getScore());
+      // Someone Won
       if(difference == 2){
         if(p1.getScore() > p2.getScore()){
           p1.addGame();
