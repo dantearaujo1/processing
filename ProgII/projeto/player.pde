@@ -1,5 +1,4 @@
 
-
 class Player {
   float   m_x;
   float   m_y;
@@ -80,6 +79,43 @@ class Player {
     initStates();
   }
 
+  void handleInput(){
+    if(m_mappings.getContext(m_name).getState("Move Right")){
+        setState(PLAYER_STATES.RIGHT,true);
+    }
+    else{
+        setState(PLAYER_STATES.RIGHT,false);
+        setVelX(0);
+    }
+    if(m_mappings.getContext(m_name).getState("Move Left")){
+        setState(PLAYER_STATES.LEFT,true);
+    }
+    else{
+        setState(PLAYER_STATES.LEFT,false);
+        setVelX(0);
+    }
+    if(m_mappings.getContext(m_name).getState("Move Down")){
+        setState(PLAYER_STATES.DOWN,true);
+    }
+    else{
+        setState(PLAYER_STATES.DOWN,false);
+        setVelY(0);
+    }
+    if(m_mappings.getContext(m_name).getState("Move Up")){
+        setState(PLAYER_STATES.UP,true);
+    }
+    else{
+        setState(PLAYER_STATES.UP,false);
+        setVelY(0);
+    }
+    if(m_mappings.getContext(m_name).getState("Aim")){
+      setState(PLAYER_STATES.AIM,true);
+    }
+    else{
+      setState(PLAYER_STATES.AIM,false);
+    }
+  }
+
   void init(float x, float y, int side){
     setSide(side);
     m_score = 0;
@@ -87,6 +123,8 @@ class Player {
     m_x = x;
     m_y = y;
     initStates();
+    resetAim();
+
   }
   void initStates(){
     m_states.put(PLAYER_STATES.LEFT,false);
@@ -98,6 +136,7 @@ class Player {
     m_states.put(PLAYER_STATES.PLAYING,false);
     m_states.put(PLAYER_STATES.WINNING,false);
     m_states.put(PLAYER_STATES.LOSING,false);
+    m_states.put(PLAYER_STATES.AIM,false);
   }
 
   void hit(Ball b, Court c){
@@ -111,8 +150,6 @@ class Player {
       // to the center of racket, the closer it gets, more power we will
       // push the ball up
       PVector bpos = b.getBallPosition();
-      /* float angleFactor = tan(radians(c.getAngle())); */
-      /* float distToCenterCourt = m_x - width/2; */
 
       float distToRacketCenter = dist(bpos.x,bpos.y,m_racketX,m_racketY);
       float percentage = distToRacketCenter*0.5/m_racketDiameter;
@@ -120,30 +157,6 @@ class Player {
       float forceY = m_maxShootPower * (1 - percentage);
 
       direction.mult(forceY);
-      // -1 shoot towards out
-      //  1 shoot towards in
-      // So if we are in side 1. -1 will shoot with negative angulation
-      // So if we are in side 2. -1 will shoot with positive angulation
-      // Because we are multiplying with m_facingDireciton
-      /* float perspectiveXOffset = forceY * angleFactor; */
-      /* int dirX = (distToCenterCourt < 0 ? -1 : 1 ); */
-
-      /* distToCenterCourt += perspectiveXOffset * m_facingDirection * dirX ; */
-      /* distToCenterCourt *= -1; */
-
-      // Multiplying with m_facingDirection of the player
-      // will ensure that dispite of the side we're going to shoot
-      // we gonna shoot in the perspective direction of the Court
-      /* dirX = dirX * m_facingDirection; */
-
-
-      // DEPRECATED
-      // This will make we turn ball to the front direction of player
-      /* float shootDir = PVector.dot(b.getVel().normalize(), new PVector(0,m_facingDirection,0)); */
-
-      /* float x = perspectiveXOffset * dirX; // This value are compensating the perspective */
-      /* float y = forceY * m_facingDirection; */
-      // If we are in serve state but did not hit the ball yet we should go her
       if(b.isServed()){
         b.setVel(direction.x,direction.y);
         /* b.setVel(x,y); */
@@ -159,6 +172,9 @@ class Player {
       b.setVel(direction.x,direction.y);
       b.setKickCount(0);
       b.setLastHit(this);
+      setState(PLAYER_STATES.AIM,false);
+      resetAim();
+
     }
 
   }
@@ -178,6 +194,10 @@ class Player {
       m_currentVel.y = m_maxVel.y;
     }
 
+    if (m_states.get(PLAYER_STATES.AIM)){
+      m_target.x += m_currentVel.x * getDeltaTime();
+      m_target.y += m_currentVel.y * getDeltaTime();
+    }
     m_x += m_currentVel.x * getDeltaTime();
     m_y += m_currentVel.y * getDeltaTime();
     m_racketX = m_x - m_racketXOffset;
@@ -209,11 +229,13 @@ class Player {
   void drawDebug(int atX, int atY){
     text(m_name , m_x + 10, m_y - m_size.x );
     text("Side: " + m_side , atX, atY + 15);
+    text("Target: (" + m_target.x + "," + m_target.y + ")" , atX + 30, atY + 15);
     text("Points: " + m_score , atX, atY + 30);
     text("Games: " + m_games , atX, atY + 45);
     text("Sets: " + m_sets , atX, atY + 60);
     text("Serving: " + m_states.get(PLAYER_STATES.SERVING) , atX, atY + 75);
     text("Recieving: " + m_states.get(PLAYER_STATES.RECIEVING) , atX, atY + 90);
+    text("Playing: " + m_states.get(PLAYER_STATES.PLAYING) , atX, atY + 105);
   }
 
   void checkWindowCollision(){
@@ -253,7 +275,7 @@ class Player {
   }
 
   boolean checkHit(Ball b){
-    float radius = b.getBallDiameter()/2;
+    float radius = b.getBallDiameter();
     if(CollisionCC(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketDiameter/2)){
       return true;
     }
@@ -293,6 +315,16 @@ class Player {
   int getScore(){
     return m_score;
   }
+  boolean getServeStatus(){
+    return m_states.get(PLAYER_STATES.SERVING);
+  }
+  boolean getRecieverStatus(){
+    return m_states.get(PLAYER_STATES.RECIEVING);
+  }
+  String getName(){
+    return m_name;
+  }
+  // SETTERS ==================================================================
   void setSide(int i){
     if(i==1){
       m_side=i;
@@ -347,6 +379,21 @@ class Player {
     m_states.put(PLAYER_STATES.RECIEVING,true);
     m_states.put(PLAYER_STATES.PLAYING,false);
   }
+
+  void setState(PLAYER_STATES st, boolean val){
+    m_states.put(st,val);
+  }
+
+  void resetAim(){
+    if(m_side == 1){
+      m_target.y = height/2 + 100;
+    }
+    else{
+      m_target.y = height/2 - 100;
+    }
+    m_target.x = width/2;
+  }
+
   void addScore(int amount){
     m_score += amount;
   }

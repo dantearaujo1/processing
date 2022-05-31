@@ -25,12 +25,12 @@ class Game{
     m_currentTime = 0.0f;
     m_lastTime =    0.0f;
     m_court =       new Court();
-    m_ball =        new Ball(0,640,15);
+    m_ball =        new Ball(0,0,15);
     m_players =     new Player[4];
-    m_players[0] =  new Player(width/2, 620,2);
-    m_players[0].m_name += 0;
+    m_players[0] =  new Player(0,0,2);
+    m_players[0].m_name += 1;
     m_players[1] =  new Player(0,0,1);
-    m_players[1].m_name += 1;
+    m_players[1].m_name += 2;
     m_net =         m_court.getNet();
     m_state =       GAME_STATES.GAME_SERVE;
     m_debug =       false;
@@ -49,11 +49,17 @@ class Game{
       m_ball.checkCourt(m_court);
       m_ball.checkNet(m_net);
       m_ball.setBallSide(m_net);
+      /* if(m_debug){ */
+      /*   m_ball.m_x = mouseX; */
+      /*   m_ball.m_y = mouseY; */
+      /*   m_ball.setBallSide(m_net); */
+      /* } */
 
 
       for (int player = 0; player < m_players.length; player++){
         Player p = m_players[player];
         if(p != null){
+          p.handleInput();
           p.update();
           p.checkNetCollision(m_net);
         }
@@ -121,11 +127,27 @@ class Game{
   Court getCourt(){
     return m_court;
   }
+  Player getPlayerServing(){
+    int pId = 0;
+    for(int p = 0; p <m_players.length; p++){
+      if(m_players[p] != null){
+        if (m_players[p].getServeStatus()){
+          pId = p;
+          break;
+        }
+      }
+    }
+    return m_players[pId];
+  }
   Player getPlayer(int id){
     if (id > 0 && id < 5){
       return m_players[id-1];
     }
     return m_players[0];
+  }
+
+  int getPlayersLength(){
+    return m_players.length;
   }
   void setState(GAME_STATES state){
     m_state = state;
@@ -151,24 +173,15 @@ class Game{
   void changeDebug(){
     m_debug =! m_debug;
   }
-  void startServing(Player p, Ball b){
-    m_state = GAME_STATES.GAME_SERVING;
-  }
-  void endServing(){
-    m_state = GAME_STATES.GAME_PLAYING;
-  }
-  void startGame(Player serve, Player reciever, Ball b){
-    startServe(serve,reciever,b);
-    serve.setScore(0);
-    reciever.setScore(0);
-  }
+  // Start any serve of the game
   void startServe(Player serve, Player reciever, Ball b){
     b.startServe();
     b.setLastHit(serve);
     serve.setServeStatus();
     reciever.setRecieverStatus();
+    serve.resetAim();
+    reciever.resetAim();
     int option = int(random(1,3));
-    println(option);
     if(serve.getSide() == 1){
       serve.setFacing(1);
       reciever.setFacing(-1);
@@ -194,6 +207,21 @@ class Game{
       }
     }
     m_state = GAME_STATES.GAME_SERVE;
+  }
+
+  // Change from moving in serving to shooting ball up to serve
+  void startServing(Player server, Ball b,Player reciever){
+    m_state = GAME_STATES.GAME_SERVING;
+    server.setState(PLAYER_STATES.PLAYING,false);
+    reciever.setState(PLAYER_STATES.PLAYING,true);
+  }
+  void endServing(){
+    m_state = GAME_STATES.GAME_PLAYING;
+  }
+  void startGame(Player serve, Player reciever, Ball b){
+    startServe(serve,reciever,b);
+    serve.setScore(0);
+    reciever.setScore(0);
   }
   void setPoint(Player p1, Player p2, Ball b){
     float side = b.getSide();
@@ -265,3 +293,5 @@ class Game{
     }
   }
 }
+
+

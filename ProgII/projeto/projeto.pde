@@ -4,26 +4,50 @@
 */
 
 Game game;
+
 KeyboardState m_keys;
+InputContext m_p1Context;
+InputContext m_debugContext;
+InputContext m_p2Context;
+InputManager m_mappings;
 
 void setup(){
   size(800,800);
+  /* frameRate(20); */
   game = new Game();
   m_keys = new KeyboardState();
+  m_debugContext = new InputContext(m_keys);
+  m_p1Context = new InputContext(m_keys);
+  m_p2Context = new InputContext(m_keys);
+
+  m_p1Context.mapAction("Hit", int(' '));
+  m_p1Context.mapState("Aim", int(' '));
+  m_p1Context.mapState("Move Up", int('w'));
+  m_p1Context.mapState("Move Down", int('s'));
+  m_p1Context.mapState("Move Left", int('a'));
+  m_p1Context.mapState("Move Right", int('d'));
+
+  m_p2Context.mapAction("Hit", int('n'));
+  m_p2Context.mapState("Aim", int(' '));
+  m_p2Context.mapState("Move Up", int('i'));
+  m_p2Context.mapState("Move Down", int('k'));
+  m_p2Context.mapState("Move Left", int('j'));
+  m_p2Context.mapState("Move Right", int('l'));
+
+  m_debugContext.mapAction("Debug", int('q'));
+  m_debugContext.mapAction("Add Point", int('e'));
+  m_debugContext.mapAction("Reset", int('r'));
+
+  m_mappings = new InputManager();
+  m_mappings.addContext("Player 1",m_p1Context);
+  m_mappings.addContext("Player 2",m_p2Context);
+  m_mappings.addContext("Debug", m_debugContext);
 }
 void draw(){
   background(0,122,0);
   m_keys.update();
+
   game.run();
-  if(m_keys.isKeyPressed(int('w'))){
-    println("OK");
-  }
-  if(m_keys.isKeyPressed(int('q'))){
-    println("Q");
-  }
-  if(m_keys.isKeyReleased(int('t'))){
-    println("Tapped");
-  }
 }
 
 void reset(Player p1, Player p2, Ball b){
@@ -35,112 +59,48 @@ void reset(Player p1, Player p2, Ball b){
 
 void keyReleased(){
   m_keys.updateKeyReleased(key);
-  Player p = game.getPlayer(1);
-  Player p2 = game.getPlayer(2);
-  if(key == 'd'){
-    p.m_states.put(PLAYER_STATES.RIGHT, false);
-    p.setVelX(0);
-  }
-  if(key == 'a'){
-    p.m_states.put(PLAYER_STATES.LEFT, false);
-    p.setVelX(0);
-  }
-  if(key == 's'){
-    p.m_states.put(PLAYER_STATES.DOWN, false);
-    p.setVelY(0);
-  }
-  if(key == 'w'){
-    p.m_states.put(PLAYER_STATES.UP, false);
-    p.setVelY(0);
-  }
-  if(key == 'l'){
-    p2.m_states.put(PLAYER_STATES.RIGHT, false);
-    p2.setVelX(0);
-  }
-  if(key == 'j'){
-    p2.m_states.put(PLAYER_STATES.LEFT, false);
-    p2.setVelX(0);
-  }
-  if(key == 'k'){
-    p2.m_states.put(PLAYER_STATES.DOWN, false);
-    p2.setVelY(0);
-  }
-  if(key == 'i'){
-    p2.m_states.put(PLAYER_STATES.UP, false);
-    p2.setVelY(0);
-  }
 }
 void keyPressed(){
   m_keys.updateKeyPressed(key);
-  Player p = game.getPlayer(1);
-  Player p2 = game.getPlayer(2);
   Ball b = game.getBall();
   Court c = game.getCourt();
 
-  if(game.shouldStartServing()){
-    if(key == ' '){
-      game.startServing(p,b);
+  for (int i = 1; i <= game.getPlayersLength(); i++){
+    Player t = game.getPlayer(i);
+    if (t != null){
+      if(game.shouldStartServing()){
+        if(m_mappings.getContext(t.getName()).getAction("Hit") && game.getPlayerServing() == t){
+          if(i % 2 == 0){
+            game.startServing(t,b,game.getPlayer(i-1));
+          }
+          else{
+            game.startServing(t,b,game.getPlayer(i+1));
+          }
+        }
+      }
+      else if (game.isServing()){
+        if(m_mappings.getContext(t.getName()).getAction("Hit")){
+          t.hit(b,c);
+          game.setState(GAME_STATES.GAME_FIRSTHIT);
+        }
+      }
+      else{
+        if(m_mappings.getContext(t.getName()).getAction("Hit")){
+          t.hit(b,c);
+          t.m_states.put(PLAYER_STATES.AIM, true);
+        }
+      }
     }
-    if(key == 'n'){
-      game.startServing(p2,b);
-    }
-  }
-  else if (game.isServing()){
-    if(key == ' '){
-      p.hit(b,c);
-      game.setState(GAME_STATES.GAME_FIRSTHIT);
-    }
-    if(key == 'n'){
-      p2.hit(b,c);
-      game.setState(GAME_STATES.GAME_FIRSTHIT);
-    }
-  }
-  else{
-    if(key == ' '){
-      p.hit(b,c);
-    }
-    if(key == 'n'){
-      p2.hit(b,c);
-    }
-  }
-  // PLAYER 1 INPUT
-  if(key == 'd'){
-    p.m_states.put(PLAYER_STATES.RIGHT, true);
-  }
-  if(key == 'a'){
-    p.m_states.put(PLAYER_STATES.LEFT, true);
-  }
-  if(key == 's'){
-    p.m_states.put(PLAYER_STATES.DOWN, true);
-  }
-  if(key == 'w'){
-    p.m_states.put(PLAYER_STATES.UP, true);
-  }
-  // PLAYER 2 INPUT
-  if(key == 'l'){
-    p2.m_states.put(PLAYER_STATES.RIGHT, true);
-  }
-  if(key == 'j'){
-    p2.m_states.put(PLAYER_STATES.LEFT, true);
-  }
-  if(key == 'k'){
-    p2.m_states.put(PLAYER_STATES.DOWN, true);
-  }
-  if(key == 'i'){
-    p2.m_states.put(PLAYER_STATES.UP, true);
   }
 
-  if(key == 'q'){
+  if(m_mappings.getContext("Debug").getAction("Debug")){
     game.changeDebug();
   }
-  if(key == 'r'){
-    reset(p2,p,b);
+  if(m_mappings.getContext("Debug").getAction("Reset")){
+    reset(game.getPlayer(1),game.getPlayer(2),b);
   }
-  if(key == 'e'){
-    game.setPoint(p,p2,b);
-  }
-  if(key == 'f'){
-    game.setPoint(p,p2,b);
+  if(m_mappings.getContext("Debug").getAction("Add Point")){
+    game.setPoint(game.getPlayer(1),game.getPlayer(2),b);
   }
 }
 

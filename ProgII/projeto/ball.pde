@@ -153,7 +153,7 @@ class Ball{
     float shadowFullSize = m_diameter * SHADOW_FULL_PERCENTAGE;
     float shadowSize = shadowFullSize * shadowPercentage;
 
-    float ballIncreasePercentage = BALL_MINIMUM_PERCENTAGE + m_currentHeight/70;
+    float ballIncreasePercentage = BALL_MINIMUM_PERCENTAGE + m_currentHeight/BALL_MAX_HEIGHT;
     float ballFullSize = m_diameter;
     float ballSize = ballFullSize * ballIncreasePercentage;
 
@@ -161,17 +161,17 @@ class Ball{
     pushStyle();
     noStroke();
     fill(20,20,20,(1-m_currentHeight/(BALL_MAX_HEIGHT + BALL_ANIMATION_MAX_HEIGHT)) * 255);
-    /* fill(0,0,0); */
     circle(m_x,m_y+ shadowSize/2,shadowSize);
 
     // Drawing the ball
     fill(m_color);
     circle(m_x,m_y - m_currentHeight,ballSize);
     popStyle();
-    if(m_state == BALL_STATES.OUT || m_state == BALL_STATES.STOPPED){
-      fill(20,20,20);
-      circle(m_shadowX,m_shadowY+ m_diameter/2,m_diameter);
-    }
+
+    /* if(m_state == BALL_STATES.OUT || m_state == BALL_STATES.STOPPED){ */
+    /*   fill(20,20,20); */
+    /*   circle(m_shadowX,m_shadowY+ m_diameter/2,m_diameter); */
+    /* } */
 
     // Debug ball information
     if(getDebug()){
@@ -185,7 +185,6 @@ class Ball{
   // collision.
   void checkOutOfBounds(){
 
-    float percentage = m_currentHeight/m_currentMaxHeight;
     PVector ballPos = getBallPosition();
     float check = getBallDiameter()/2;
 
@@ -199,13 +198,12 @@ class Ball{
       m_vel.y *= -1;
       m_kickCount += 1;
     }
-    if(ballPos.x + check > width){
-      setBallPosition(width - check, m_y + m_currentHeight);
+    if(ballPos.x > width - check){
+      m_x = width - check;
       m_vel.x *= -1;
       m_kickCount += 1;
     }
     if(ballPos.x - check < 0){
-      setBallPosition(check, m_y + m_currentHeight);
       m_x = check;
       m_vel.x *= -1;
       m_kickCount += 1;
@@ -235,8 +233,10 @@ class Ball{
         m_state = BALL_STATES.OUT;
       }
     }
-    else{
-
+    else if (CollisionPTrapeze(pos.x,pos.y,c.getAngle(),c.getVertices()) && m_currentHeight == 0){
+      if(m_lastHit.getSide() == m_side && m_state == BALL_STATES.PLAYING){
+        m_state = BALL_STATES.STOPPED;
+      }
     }
   }
   // SOME GETTERS AND SETTERS ======================================================
@@ -285,11 +285,15 @@ class Ball{
     m_lastHit = p;
   }
   void setBallSide(Net n){
-    if(m_y < n.getPosY()){
-      m_side = 1;
-  }
-    else if (m_y > n.getPosY()){
-      m_side = 2;
+    if(m_side == 1){
+      if(m_y + getBallDiameter()/2 > n.getPosY()){
+        m_side = 2;
+      }
+    }
+    else{
+      if(m_y < n.getPosY() - n.getHeight()){
+        m_side = 1;
+      }
     }
   }
   int getSide(){
@@ -311,7 +315,13 @@ class Ball{
    m_y = y;
   }
   float getBallDiameter(){
-    float check = BALL_MINIMUM_PERCENTAGE + m_currentHeight/BALL_MAX_HEIGHT;
+    float check = m_diameter * BALL_MINIMUM_PERCENTAGE + m_currentHeight/BALL_MAX_HEIGHT;
+    return check;
+  }
+
+  float getShadowDiameter(){
+    float shadowPercentage = 1 - m_currentHeight/BALL_MAX_HEIGHT;
+    float check = m_diameter * SHADOW_FULL_PERCENTAGE * shadowPercentage;
     return check;
   }
   boolean hasEnd(){

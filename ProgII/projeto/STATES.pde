@@ -20,8 +20,10 @@ enum PLAYER_STATES{
   PLAYING,
   WINNING,
   LOSING,
+  AIM,
   UP,
   LEFT,
   DOWN,
   RIGHT,
 }
+
