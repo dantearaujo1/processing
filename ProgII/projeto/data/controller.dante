@@ -1,0 +1,21 @@
+Player 1
+Move Up w STATE
+Move Down s STATE
+Move Left a STATE
+Move Right d STATE
+Hit space ACTION
+Aim space STATE
+
+Player 2
+Move Up i STATE
+Move Down k STATE
+Move Left j STATE
+Move Right l STATE
+Hit n ACTION
+Aim n STATE
+
+Debug
+Debug q ACTION
+Add Point e ACTION
+Reset r ACTION
+

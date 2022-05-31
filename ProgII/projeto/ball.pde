@@ -90,7 +90,7 @@ class Ball{
       simulateThrow(); // This makes the ball Z thrust up and start our game going
       g.endServing();
     }
-    else if(g.isInGame() || g.isFirstHit()){
+    else if(g.isInGame() ){
       simulateHeight();
       m_y += m_vel.y * getDeltaTime();
       m_x += m_vel.x * getDeltaTime();

@@ -1,44 +1,108 @@
 
 class Game{
-  GAME_STATES   m_states;
-  Ball          m_ball;
-  Player[]      m_players;
-  Court         m_court;
-  Net           m_net;
+  GAME_STATES     m_states;
+  Ball            m_ball;
+  Player[]        m_players;
+  Court           m_court;
+  Net             m_net;
 
-  float         m_currentTime;
-  float         m_deltaTime;
-  float         m_lastTime;
+  KeyboardState   m_keyboard;
+  InputContext[]  m_contexts;
+  InputManager    m_inputManager;
 
-  String        m_scoreText;
+  float           m_currentTime;
+  float           m_deltaTime;
+  float           m_lastTime;
 
-  boolean       m_debug;
+  String          m_scoreText;
 
-  GAME_STATES   m_state;
+  boolean         m_debug;
+
+  GAME_STATES     m_state;
 
   Game(){
     init();
   }
 
   void init(){
-    m_deltaTime =   0.0f;
-    m_currentTime = 0.0f;
-    m_lastTime =    0.0f;
-    m_court =       new Court();
-    m_ball =        new Ball(0,0,15);
-    m_players =     new Player[4];
-    m_players[0] =  new Player(0,0,2);
+    m_keyboard = new KeyboardState();
+    m_deltaTime =     0.0f;
+    m_currentTime =   0.0f;
+    m_lastTime =      0.0f;
+    m_court =         new Court();
+    m_ball =          new Ball(0,0,15);
+    m_players =       new Player[4];
+    m_contexts =      new InputContext[10];
+    m_inputManager =  new InputManager();
+    m_players[0] =    new Player(0,0,2);
     m_players[0].m_name += 1;
-    m_players[1] =  new Player(0,0,1);
+    m_players[1] =    new Player(0,0,1);
     m_players[1].m_name += 2;
+    m_players[1].setColor(0,color(255,0,0));
+    m_players[1].setColor(1,color(134,50,200));
+    m_players[1].setColor(2,color(0,255,0));
     m_net =         m_court.getNet();
     m_state =       GAME_STATES.GAME_SERVE;
     m_debug =       false;
+
+    initControllerContexts();
+    loadController("controller.dante");
     startServe(m_players[1],m_players[0],m_ball);
 
   }
+  void initControllerContexts(){
+    // from 0 to 3 are players contexts
+    for (int i = 0; i < 5; i++){
+      m_contexts[i] = new InputContext(m_keyboard);
+    }
+    m_inputManager.addContext(m_players[0].m_name,m_contexts[0]);
+    m_inputManager.addContext(m_players[1].m_name,m_contexts[1]);
+    m_inputManager.addContext("Debug",m_contexts[4]);
+  }
+
+  void loadController(String inputConfig){
+    String[] lines = loadStrings(inputConfig);
+    String context = "";
+    String keyStr = "";
+    String valueStr = "";
+    String typeStr = "";
+    for (int i = 0; i < lines.length; i++){
+      String[] words = split(lines[i], ' ');
+      if(words.length <= 2){
+        context = lines[i];
+        continue;
+      }
+      if(words.length >= 4){
+        keyStr = words[0] + " " + words[1];
+        valueStr = words[2];
+        typeStr = words[3];
+      }
+      else{
+        keyStr = words[0];
+        valueStr = words[1];
+        typeStr = words[2];
+      }
+      if(valueStr.equals("space")) valueStr = " ";
+      char[] c = valueStr.toCharArray();
+      println(keyStr + "," + valueStr + "," + typeStr + "," + c[0] );
+      if (typeStr.equals("ACTION")){
+        m_inputManager.getContext(context).mapAction(keyStr,c[0]);
+      }
+      else{
+        m_inputManager.getContext(context).mapState(keyStr,c[0]);
+      }
+    }
+  }
+
+  void updateKeysReleased(int k){
+    m_keyboard.updateKeyReleased(k);
+  }
+  void updateKeysPressed(int k){
+    m_keyboard.updateKeyPressed(k);
+  }
 
   void update(){
+    m_keyboard.update();
     m_currentTime = millis()/1000.0f;
     m_deltaTime += m_currentTime - m_lastTime;
     m_lastTime = m_currentTime;
@@ -49,17 +113,12 @@ class Game{
       m_ball.checkCourt(m_court);
       m_ball.checkNet(m_net);
       m_ball.setBallSide(m_net);
-      /* if(m_debug){ */
-      /*   m_ball.m_x = mouseX; */
-      /*   m_ball.m_y = mouseY; */
-      /*   m_ball.setBallSide(m_net); */
-      /* } */
 
 
       for (int player = 0; player < m_players.length; player++){
         Player p = m_players[player];
         if(p != null){
-          p.handleInput();
+          p.handleInput(m_inputManager);
           p.update();
           p.checkNetCollision(m_net);
         }
@@ -161,9 +220,9 @@ class Game{
   boolean isInGame(){
     return (m_state == GAME_STATES.GAME_PLAYING);
   }
-  boolean isFirstHit(){
-    return (m_state == GAME_STATES.GAME_FIRSTHIT);
-  }
+  /* boolean isFirstHit(){ */
+  /*   return (m_state == GAME_STATES.GAME_FIRSTHIT); */
+  /* } */
   boolean shouldShowScore(){
     return (m_state == GAME_STATES.GAME_POINT);
   }

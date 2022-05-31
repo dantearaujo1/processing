@@ -12,6 +12,7 @@ class Player {
   int     m_games;
   int     m_sets;
   String  m_name;
+  color[] m_outfit;
 
   float   m_racketX;
   float   m_racketY;
@@ -38,6 +39,10 @@ class Player {
     m_racketY = m_y - m_racketYOffset;
     m_racketHeight = 35;
     m_racketDiameter = 30;
+    m_outfit = new color[3];
+    m_outfit[0] = color(90,40,90);
+    m_outfit[1] = color(0,0,150);
+    m_outfit[2] = color(122,0,0);
     setSide(1);
 
     m_name = "Player ";
@@ -63,9 +68,13 @@ class Player {
     m_racketY = m_y - m_racketYOffset;
     m_racketHeight = 35;
     m_racketDiameter = 30;
+    m_outfit = new color[3];
+    m_outfit[0] = color(90,40,90);
+    m_outfit[1] = color(0,0,150);
+    m_outfit[2] = color(122,0,0);
     setSide(side);
-    m_name = "Player ";
 
+    m_name = "Player ";
     m_size = new PVector(20,30);
     m_maxVel = new PVector(250,200);
     m_currentVel = new PVector(0,0);
@@ -79,36 +88,36 @@ class Player {
     initStates();
   }
 
-  void handleInput(){
-    if(m_mappings.getContext(m_name).getState("Move Right")){
+  void handleInput(InputManager inpt){
+    if(inpt.getContext(m_name).getState("Move Right")){
         setState(PLAYER_STATES.RIGHT,true);
     }
     else{
         setState(PLAYER_STATES.RIGHT,false);
         setVelX(0);
     }
-    if(m_mappings.getContext(m_name).getState("Move Left")){
+    if(inpt.getContext(m_name).getState("Move Left")){
         setState(PLAYER_STATES.LEFT,true);
     }
     else{
         setState(PLAYER_STATES.LEFT,false);
         setVelX(0);
     }
-    if(m_mappings.getContext(m_name).getState("Move Down")){
+    if(inpt.getContext(m_name).getState("Move Down")){
         setState(PLAYER_STATES.DOWN,true);
     }
     else{
         setState(PLAYER_STATES.DOWN,false);
         setVelY(0);
     }
-    if(m_mappings.getContext(m_name).getState("Move Up")){
+    if(inpt.getContext(m_name).getState("Move Up")){
         setState(PLAYER_STATES.UP,true);
     }
     else{
         setState(PLAYER_STATES.UP,false);
         setVelY(0);
     }
-    if(m_mappings.getContext(m_name).getState("Aim")){
+    if(inpt.getContext(m_name).getState("Aim")){
       setState(PLAYER_STATES.AIM,true);
     }
     else{
@@ -208,19 +217,18 @@ class Player {
 
   void draw(){
     stroke(255);
-    fill(90,40,90);
+    fill(m_outfit[0]);
     circle(m_x + m_size.x/2, m_y - m_size.y/2, m_size.x);
 
-    fill(0,0,150);
+    fill(m_outfit[1]);
     rect(m_x, m_y, m_size.x, m_size.y);
 
-    fill(122,0,0);
+    fill(m_outfit[2]);
     pushStyle();
-    stroke(0,0,255);
+    stroke(m_outfit[2]);
     strokeWeight(4);
     line(m_x - m_racketXOffset/2, m_y - m_racketYOffset/6, m_x, m_y + 12);
     popStyle();
-    noFill();
     circle(m_x - m_racketXOffset, m_y - m_racketYOffset, m_racketDiameter);
     circle(m_target.x,m_target.y, 5);
 
@@ -354,6 +362,11 @@ class Player {
   }
   void setScore(int score){
     m_score = score;
+  }
+  void setColor(int piece , color c){
+    if (piece >= 0 || piece < 3){
+      m_outfit[piece] = c;
+    }
   }
   void setTarget(float x, float y){
     if(x > 0 && x < width){
