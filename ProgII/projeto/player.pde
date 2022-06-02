@@ -11,6 +11,7 @@ class Player {
   int     m_score;
   int     m_games;
   int     m_sets;
+  int     m_id;
   String  m_name;
   color[] m_outfit;
 
@@ -45,7 +46,8 @@ class Player {
     m_outfit[2] = color(122,0,0);
     setSide(1);
 
-    m_name = "Player ";
+    m_id = 0;
+    m_name = "Player " + m_id;
     m_maxVel = new PVector(100,200);
     m_currentVel = new PVector(0,0);
     m_size = new PVector(20,30);
@@ -59,7 +61,7 @@ class Player {
     initStates();
 
   }
-  Player(float x, float y, int side){
+  Player(float x, float y,int id, int side){
     m_x = x;
     m_y = y;
     m_racketXOffset = 15;
@@ -74,7 +76,8 @@ class Player {
     m_outfit[2] = color(122,0,0);
     setSide(side);
 
-    m_name = "Player ";
+    m_id = id;
+    m_name = "Player " + m_id;
     m_size = new PVector(20,30);
     m_maxVel = new PVector(250,200);
     m_currentVel = new PVector(0,0);
@@ -88,36 +91,59 @@ class Player {
     initStates();
   }
 
-  void handleInput(InputManager inpt){
-    if(inpt.getContext(m_name).getState("Move Right")){
+  void handleInput(Game g){
+    InputManager input = g_inputManager;
+    InputContext ctx = input.getContext(m_name);
+    Ball ball = g.getBall();
+    if (g.shouldStartServing()){
+      if(ctx.getAction("Hit") && getServeStatus()){
+        g.startServing(this,ball,g.getPlayerRecieving());
+      }
+    }
+    else if (g.isServing()){
+      if(ctx.getAction("Hit")){
+        hit(ball,g.getCourt());
+      }
+    }
+    else{
+      if(ctx.getAction("Hit")){
+        hit(ball,g.getCourt());
+      }
+
+    }
+    if(ctx.getState("Move Right")){
+        setState(PLAYER_STATES.RIGHT,true);
+    }
+
+    if(ctx.getState("Move Right")){
         setState(PLAYER_STATES.RIGHT,true);
     }
     else{
         setState(PLAYER_STATES.RIGHT,false);
         setVelX(0);
     }
-    if(inpt.getContext(m_name).getState("Move Left")){
+    if(ctx.getState("Move Left")){
         setState(PLAYER_STATES.LEFT,true);
     }
     else{
         setState(PLAYER_STATES.LEFT,false);
         setVelX(0);
     }
-    if(inpt.getContext(m_name).getState("Move Down")){
+    if(ctx.getState("Move Down")){
         setState(PLAYER_STATES.DOWN,true);
     }
     else{
         setState(PLAYER_STATES.DOWN,false);
         setVelY(0);
     }
-    if(inpt.getContext(m_name).getState("Move Up")){
+    if(ctx.getState("Move Up")){
         setState(PLAYER_STATES.UP,true);
     }
     else{
         setState(PLAYER_STATES.UP,false);
         setVelY(0);
     }
-    if(inpt.getContext(m_name).getState("Aim")){
+    if(ctx.getState("Aim")){
       setState(PLAYER_STATES.AIM,true);
     }
     else{
@@ -151,7 +177,6 @@ class Player {
   void hit(Ball b, Court c){
     if(checkHit(b)){
 
-      // NEW HIT
       PVector direction = PVector.sub(m_target,new PVector(m_racketX,m_racketY)).normalize();
 
       // Getting ball get ball position
@@ -161,15 +186,18 @@ class Player {
       PVector bpos = b.getBallPosition();
 
       float distToRacketCenter = dist(bpos.x,bpos.y,m_racketX,m_racketY);
-      float percentage = distToRacketCenter*0.5/m_racketDiameter;
-      float result = m_power * (1.1 - percentage);
-      float forceY = m_maxShootPower * (1 - percentage);
+      // Reduce percentage by half to not be an weak shoot
+      float percentage = (distToRacketCenter/m_racketDiameter)*0.5;
+      float heightForce = m_power * (1.1 - percentage);
+      float shootDirectionPower = m_maxShootPower * (1 - percentage);
+      println("Dist: " + distToRacketCenter + " Percentage: " + percentage*100 + "%");
+      println("HeightPower: " + heightForce + " PowerToTarget: " + shootDirectionPower);
 
-      direction.mult(forceY);
-      if(b.isServed()){
+      direction.mult(shootDirectionPower);
+      if(b.isServing()){
         b.setVel(direction.x,direction.y);
-        /* b.setVel(x,y); */
-        b.setVelZ(result);
+        b.setVelZ(heightForce);
+        b.setLastHit(this);
         b.m_state = BALL_STATES.PLAYING;
         m_states.put(PLAYER_STATES.PLAYING,true);
         return;
@@ -177,7 +205,7 @@ class Player {
 
       // When the serve end and they are playing
       b.setCurrentMaxHeight(b.getMaxHeight());
-      b.setVelZ(result);
+      b.setVelZ(heightForce);
       b.setVel(direction.x,direction.y);
       b.setKickCount(0);
       b.setLastHit(this);
@@ -188,7 +216,7 @@ class Player {
 
   }
 
-  void update(){
+  void update(Game g, Court c, Net n){
     boolean condition = (!m_states.get(PLAYER_STATES.SERVING) || m_states.get(PLAYER_STATES.PLAYING));
     if (m_states.get(PLAYER_STATES.LEFT)){
       m_currentVel.x = -m_maxVel.x;
@@ -211,6 +239,7 @@ class Player {
     m_y += m_currentVel.y * getDeltaTime();
     m_racketX = m_x - m_racketXOffset;
     m_racketY = m_y - m_racketYOffset;
+    checkNetCollision(n);
     checkWindowCollision();
 
   }
@@ -235,6 +264,8 @@ class Player {
   }
 
   void drawDebug(int atX, int atY){
+    noFill();
+    circle(m_x - m_racketXOffset, m_y - m_racketYOffset, m_racketDiameter*2);
     text(m_name , m_x + 10, m_y - m_size.x );
     text("Side: " + m_side , atX, atY + 15);
     text("Target: (" + m_target.x + "," + m_target.y + ")" , atX + 30, atY + 15);
@@ -284,7 +315,9 @@ class Player {
 
   boolean checkHit(Ball b){
     float radius = b.getBallDiameter();
-    if(CollisionCC(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketDiameter/2)){
+    // Passed our diameter for collision check instead of radius
+    // To facilitate our shot
+    if(CollisionCC(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketDiameter)){
       return true;
     }
     return false;
@@ -366,6 +399,11 @@ class Player {
   void setColor(int piece , color c){
     if (piece >= 0 || piece < 3){
       m_outfit[piece] = c;
+    }
+  }
+  void setId(int id){
+    if(id > 0 && id < 5){
+      m_id = id;
     }
   }
   void setTarget(float x, float y){

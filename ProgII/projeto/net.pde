@@ -8,7 +8,7 @@ class Net{
   Net(){
     m_x = 0;
     m_y = 0;
-    m_z = 12;
+    m_z = 6;
     m_size = new PVector();
   }
 
@@ -16,8 +16,9 @@ class Net{
   }
   void draw(){
     fill(180);
+
     // We subtract m_size.y from m_y to put our bottom end in the middle of
-    // points
+    // points - ANCHOR POINT
     rect(m_x,m_y - m_size.y,m_size.x,m_size.y);
   }
 

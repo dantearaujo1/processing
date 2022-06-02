@@ -5,16 +5,18 @@ class Game{
   Player[]        m_players;
   Court           m_court;
   Net             m_net;
+  int             m_activePlayers;
+  int             m_menuChoice;
 
   KeyboardState   m_keyboard;
   InputContext[]  m_contexts;
-  InputManager    m_inputManager;
 
   float           m_currentTime;
   float           m_deltaTime;
   float           m_lastTime;
 
   String          m_scoreText;
+  String          m_gameTitle;;
 
   boolean         m_debug;
 
@@ -29,20 +31,27 @@ class Game{
     m_deltaTime =     0.0f;
     m_currentTime =   0.0f;
     m_lastTime =      0.0f;
+    m_activePlayers = 0;
     m_court =         new Court();
     m_ball =          new Ball(0,0,15);
     m_players =       new Player[4];
     m_contexts =      new InputContext[10];
-    m_inputManager =  new InputManager();
-    m_players[0] =    new Player(0,0,2);
-    m_players[0].m_name += 1;
-    m_players[1] =    new Player(0,0,1);
-    m_players[1].m_name += 2;
+    m_gameTitle =     "Tennis Atari 2600";
+    for(int i = 1; i <= PLAYERS_PLAYING; i++){
+      if(i % 2 == 0){
+        m_players[i-1] =    new Player(0,0,i,1);
+      }
+      else{
+        m_players[i-1] =    new Player(0,0,i,2);
+      }
+      m_activePlayers++;
+
+    }
     m_players[1].setColor(0,color(255,0,0));
     m_players[1].setColor(1,color(134,50,200));
     m_players[1].setColor(2,color(0,255,0));
     m_net =         m_court.getNet();
-    m_state =       GAME_STATES.GAME_SERVE;
+    m_state =       GAME_STATES.GAME_MENU;
     m_debug =       false;
 
     initControllerContexts();
@@ -52,15 +61,17 @@ class Game{
   }
   void initControllerContexts(){
     // from 0 to 3 are players contexts
+    // 1 context for debug = 4 contexts;
     for (int i = 0; i < 5; i++){
       m_contexts[i] = new InputContext(m_keyboard);
     }
-    m_inputManager.addContext(m_players[0].m_name,m_contexts[0]);
-    m_inputManager.addContext(m_players[1].m_name,m_contexts[1]);
-    m_inputManager.addContext("Debug",m_contexts[4]);
+    g_inputManager.addContext(m_players[0].m_name,m_contexts[0]);
+    g_inputManager.addContext(m_players[1].m_name,m_contexts[1]);
+    g_inputManager.addContext("Debug",m_contexts[4]);
   }
 
   void loadController(String inputConfig){
+    InputManager input = g_inputManager;
     String[] lines = loadStrings(inputConfig);
     String context = "";
     String keyStr = "";
@@ -84,56 +95,86 @@ class Game{
       }
       if(valueStr.equals("space")) valueStr = " ";
       char[] c = valueStr.toCharArray();
-      println(keyStr + "," + valueStr + "," + typeStr + "," + c[0] );
+      println(context + "," + keyStr + "," + valueStr + "," + typeStr + "," + c[0] );
       if (typeStr.equals("ACTION")){
-        m_inputManager.getContext(context).mapAction(keyStr,c[0]);
+        input.getContext(context).mapAction(keyStr,c[0]);
       }
       else{
-        m_inputManager.getContext(context).mapState(keyStr,c[0]);
+        input.getContext(context).mapState(keyStr,c[0]);
       }
     }
   }
 
   void updateKeysReleased(int k){
-    m_keyboard.updateKeyReleased(k);
+    if(m_state != GAME_STATES.GAME_MENU){
+      m_keyboard.updateKeyReleased(k);
+    }
   }
   void updateKeysPressed(int k){
-    m_keyboard.updateKeyPressed(k);
+    if(m_state != GAME_STATES.GAME_MENU){
+      m_keyboard.updateKeyPressed(k);
+    }
   }
 
-  void update(){
-    m_keyboard.update();
+  void updateMenu(){
+    if(CollisionRP(float(width/2 - 30), float(height/2 + 50), float(60),float(30),float(mouseX),float(mouseY))){
+      m_menuChoice = 1;
+    }
+    else if(CollisionRP(float(width/2 - 30), float(height/2 + 90), float(60),float(30),float(mouseX),float(mouseY))){
+      m_menuChoice = 2;
+    }
+    else{
+      m_menuChoice = 0;
+    }
+
+    if(mouseButton == LEFT && mousePressed){
+      switch(m_menuChoice){
+        case 0:
+          break;
+        case 1:
+          setState(GAME_STATES.GAME_SERVE);
+          break;
+        case 2:
+          exit();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+  void updateGame(){
     m_currentTime = millis()/1000.0f;
     m_deltaTime += m_currentTime - m_lastTime;
     m_lastTime = m_currentTime;
 
     if (m_deltaTime >= DT){
-      m_deltaTime -= DT;
-      m_ball.update(this);
-      m_ball.checkCourt(m_court);
-      m_ball.checkNet(m_net);
-      m_ball.setBallSide(m_net);
+      if(m_state == GAME_STATES.GAME_MENU){
 
+      }
+      else{
+        m_deltaTime -= DT;
+        m_ball.update(this,m_court,m_net);
 
-      for (int player = 0; player < m_players.length; player++){
-        Player p = m_players[player];
-        if(p != null){
-          p.handleInput(m_inputManager);
-          p.update();
-          p.checkNetCollision(m_net);
+        for (int player = 0; player < m_activePlayers; player++){
+          Player p = m_players[player];
+          if(p != null){
+            p.handleInput(this);
+            p.update(this,m_court,m_net);
+          }
+        }
+
+        if(shouldGivePoint()){
+          setState(GAME_STATES.GAME_POINT);
+          setPoint(m_players[0],m_players[1],m_ball);
+          startServe(m_players[0],m_players[1],m_ball);
         }
       }
-
-      if(shouldGivePoint()){
-        setState(GAME_STATES.GAME_POINT);
-        setPoint(m_players[0],m_players[1],m_ball);
-        startServe(m_players[0],m_players[1],m_ball);
-      }
     }
+    m_keyboard.update();
 
   }
 
-  void draw(){
+  void drawGame(){
     m_court.draw();
     // Should draw Player 2 and 4 if they exist
     if(m_players[1] != null) m_players[1].draw();
@@ -151,11 +192,37 @@ class Game{
     if(m_players[2] != null)m_players[2].draw();
 
   }
+  void drawMenu(){
+    fill(150,150,0);
+    textSize(46);
+    text(m_gameTitle,width/2 - textWidth(m_gameTitle)/2, height/2 - 100);
+
+    // Button - Start
+    fill(180);
+    rect(width/2 - 30, height/2 + 50, 60,30);
+    textSize(16);
+    fill(16);
+    text("Start",width/2 - 15, height/2 + 50 + 20);
+    // Button - Exit
+    fill(180);
+    rect(width/2 - 30, height/2 + 90, 60,30);
+    textSize(16);
+    fill(16);
+    text("Exit",width/2 - 15, height/2 + 90 + 20);
+    /* text("" + m_state,10,10); */
+    /* text("" + m_menuChoice,10,25); */
+  }
 
   void run(){
-    update();
-    draw();
-    drawGUI();
+    if(m_state == GAME_STATES.GAME_MENU){
+      updateMenu();
+      drawMenu();
+    }
+    else{
+      updateGame();
+      drawGame();
+      drawGUI();
+    }
   }
 
   void drawGUI(){
@@ -198,6 +265,18 @@ class Game{
     }
     return m_players[pId];
   }
+  Player getPlayerRecieving(){
+    int pId = 0;
+    for(int p = 0; p <m_players.length; p++){
+      if(m_players[p] != null){
+        if (m_players[p].getRecieverStatus()){
+          pId = p;
+          break;
+        }
+      }
+    }
+    return m_players[pId];
+  }
   Player getPlayer(int id){
     if (id > 0 && id < 5){
       return m_players[id-1];
@@ -219,12 +298,6 @@ class Game{
   }
   boolean isInGame(){
     return (m_state == GAME_STATES.GAME_PLAYING);
-  }
-  /* boolean isFirstHit(){ */
-  /*   return (m_state == GAME_STATES.GAME_FIRSTHIT); */
-  /* } */
-  boolean shouldShowScore(){
-    return (m_state == GAME_STATES.GAME_POINT);
   }
   boolean shouldGivePoint(){
     return (m_ball.hasEnd());
@@ -265,7 +338,9 @@ class Game{
         reciever.setPos(width/2 - width/8, 130);
       }
     }
-    m_state = GAME_STATES.GAME_SERVE;
+    if(m_state != GAME_STATES.GAME_MENU){
+      m_state = GAME_STATES.GAME_SERVE;
+    }
   }
 
   // Change from moving in serving to shooting ball up to serve

@@ -82,7 +82,7 @@ class Ball{
     m_state = BALL_STATES.SERVE;
   }
 
-  void update(Game g){
+  void update(Game g, Court c, Net n){
     if(g.shouldStartServing()){
       kickBallAnimation();
     }
@@ -94,6 +94,9 @@ class Ball{
       simulateHeight();
       m_y += m_vel.y * getDeltaTime();
       m_x += m_vel.x * getDeltaTime();
+      checkCourt(c);
+      checkNet(n);
+      setBallSide(n);
       checkOutOfBounds();
     }
   }
@@ -110,6 +113,8 @@ class Ball{
         elapsedTime = 0;
       }
       elapsedTime += getDeltaTime();
+
+
       Player p = m_lastHit;
       m_x = p.getRacketX();
       m_y = p.getPosY() + 20;
@@ -153,6 +158,8 @@ class Ball{
     float shadowFullSize = m_diameter * SHADOW_FULL_PERCENTAGE;
     float shadowSize = shadowFullSize * shadowPercentage;
 
+    // Increase ball with higher heights. Max is 1 + Minimum Percentage multiply
+    // by ball diameter
     float ballIncreasePercentage = BALL_MINIMUM_PERCENTAGE + m_currentHeight/BALL_MAX_HEIGHT;
     float ballFullSize = m_diameter;
     float ballSize = ballFullSize * ballIncreasePercentage;
@@ -168,10 +175,6 @@ class Ball{
     circle(m_x,m_y - m_currentHeight,ballSize);
     popStyle();
 
-    /* if(m_state == BALL_STATES.OUT || m_state == BALL_STATES.STOPPED){ */
-    /*   fill(20,20,20); */
-    /*   circle(m_shadowX,m_shadowY+ m_diameter/2,m_diameter); */
-    /* } */
 
     // Debug ball information
     if(getDebug()){
@@ -219,7 +222,7 @@ class Ball{
       }
       else{
         m_currentHeight = 0;
-        m_y = n.getPosY() - radius;
+        m_y = n.getPosY();
         m_currentMaxHeight = 0.1;
         m_state = BALL_STATES.STOPPED;
       }
@@ -258,6 +261,9 @@ class Ball{
   }
   void setCurrentMaxHeight(float c){
     m_currentMaxHeight = c;
+  }
+  void setState(BALL_STATES state){
+    m_state = state;
   }
   PVector getVel(){
     return m_vel.copy();
@@ -330,7 +336,7 @@ class Ball{
   boolean isInGame(){
     return (m_state == BALL_STATES.PLAYING);
   }
-  boolean isServed(){
+  boolean isServing(){
     return (m_state == BALL_STATES.SERVING);
   }
   void startServe(){

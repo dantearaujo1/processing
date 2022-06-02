@@ -14,3 +14,5 @@ final float SHADOW_FULL_PERCENTAGE = 0.7;
 
 final float FRAME_RATE = 60.0f;
 final float DT = 1.0/FRAME_RATE;
+
+final int PLAYERS_PLAYING = 2;
