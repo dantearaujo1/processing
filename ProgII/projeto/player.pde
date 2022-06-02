@@ -5,6 +5,7 @@ class Player {
   PVector m_size;
 
   PVector m_target;
+  boolean m_showTarget;
 
   int     m_facingDirection;
   int     m_side;
@@ -52,6 +53,7 @@ class Player {
     m_currentVel = new PVector(0,0);
     m_size = new PVector(20,30);
     m_target = new PVector(width/2, height/2);
+    m_showTarget = false;
     m_power = 70;
     m_maxShootPower = 200;
     m_sets = 0;
@@ -82,6 +84,7 @@ class Player {
     m_maxVel = new PVector(250,200);
     m_currentVel = new PVector(0,0);
     m_target = new PVector(width/2, height/2 - 100);
+    m_showTarget = false;
     m_maxShootPower = 225;
     m_power = 70;
     m_score = 0;
@@ -100,16 +103,10 @@ class Player {
         g.startServing(this,ball,g.getPlayerRecieving());
       }
     }
-    else if (g.isServing()){
-      if(ctx.getAction("Hit")){
-        hit(ball,g.getCourt());
-      }
-    }
     else{
-      if(ctx.getAction("Hit")){
+      if(ctx.getAction("Hit") && ball.getState() == BALL_STATES.SERVING){
         hit(ball,g.getCourt());
       }
-
     }
     if(ctx.getState("Move Right")){
         setState(PLAYER_STATES.RIGHT,true);
@@ -169,8 +166,6 @@ class Player {
     m_states.put(PLAYER_STATES.SERVING,true);
     m_states.put(PLAYER_STATES.RECIEVING,false);
     m_states.put(PLAYER_STATES.PLAYING,false);
-    m_states.put(PLAYER_STATES.WINNING,false);
-    m_states.put(PLAYER_STATES.LOSING,false);
     m_states.put(PLAYER_STATES.AIM,false);
   }
 
@@ -190,33 +185,50 @@ class Player {
       float percentage = (distToRacketCenter/m_racketDiameter)*0.5;
       float heightForce = m_power * (1.1 - percentage);
       float shootDirectionPower = m_maxShootPower * (1 - percentage);
-      println("Dist: " + distToRacketCenter + " Percentage: " + percentage*100 + "%");
-      println("HeightPower: " + heightForce + " PowerToTarget: " + shootDirectionPower);
 
       direction.mult(shootDirectionPower);
+
       if(b.isServing()){
         b.setVel(direction.x,direction.y);
         b.setVelZ(heightForce);
         b.setLastHit(this);
-        b.m_state = BALL_STATES.PLAYING;
+        b.setState(BALL_STATES.PLAYING);
         m_states.put(PLAYER_STATES.PLAYING,true);
+        m_showTarget = false;
         return;
       }
-
-      // When the serve end and they are playing
-      b.setCurrentMaxHeight(b.getMaxHeight());
-      b.setVelZ(heightForce);
-      b.setVel(direction.x,direction.y);
-      b.setKickCount(0);
-      b.setLastHit(this);
-      setState(PLAYER_STATES.AIM,false);
-      resetAim();
 
     }
 
   }
+  void hit2(Ball b, Court c){
+
+    if(checkHit(b)){
+      PVector bpos = b.getBallPosition();
+      PVector direction = PVector.sub(bpos,new PVector(m_racketX,m_racketY)).normalize();
+
+      float distToRacketCenter = dist(bpos.x,bpos.y,m_racketX,m_racketY);
+      // Reduce percentage by half to not be an weak shoot
+      float percentage = (distToRacketCenter/m_racketDiameter);
+      float heightForce = m_power * (percentage);
+      float shootDirectionPower = m_maxShootPower;
+      // Reduce percentage by half to not be an weak shoot
+      direction.mult(shootDirectionPower);
+
+      // When the serve end and they are playing
+      b.setCurrentMaxHeight(b.getMaxHeight());
+      b.setVelZ(heightForce);
+      b.setVel(direction.x, direction.y);
+      b.setKickCount(0);
+      b.setLastHit(this);
+
+    }
+  }
 
   void update(Game g, Court c, Net n){
+    if(g.getBall().getState() == BALL_STATES.PLAYING && !g.getBall().isFirstHit()){
+      hit2(g.getBall(),c);
+    }
     boolean condition = (!m_states.get(PLAYER_STATES.SERVING) || m_states.get(PLAYER_STATES.PLAYING));
     if (m_states.get(PLAYER_STATES.LEFT)){
       m_currentVel.x = -m_maxVel.x;
@@ -259,7 +271,9 @@ class Player {
     line(m_x - m_racketXOffset/2, m_y - m_racketYOffset/6, m_x, m_y + 12);
     popStyle();
     circle(m_x - m_racketXOffset, m_y - m_racketYOffset, m_racketDiameter);
-    circle(m_target.x,m_target.y, 5);
+    if(m_showTarget){
+      circle(m_target.x,m_target.y, 5);
+    }
 
   }
 
@@ -317,7 +331,7 @@ class Player {
     float radius = b.getBallDiameter();
     // Passed our diameter for collision check instead of radius
     // To facilitate our shot
-    if(CollisionCC(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketDiameter)){
+    if(CollisionCC(b.getBallPosition().x,b.getBallPosition().y, radius, m_racketX, m_racketY, m_racketDiameter/2)){
       return true;
     }
     return false;
@@ -422,6 +436,7 @@ class Player {
   }
   void setServeStatus(){
     m_states.put(PLAYER_STATES.SERVING,true);
+    m_showTarget = true;
     m_states.put(PLAYER_STATES.RECIEVING,false);
     m_states.put(PLAYER_STATES.PLAYING,false);
   }

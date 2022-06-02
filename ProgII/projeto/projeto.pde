@@ -5,11 +5,13 @@
 
 Game game;
 InputManager g_inputManager;
+KeyboardState g_keyboard;
 
 
 void setup(){
   size(800,800);
   g_inputManager = new InputManager();
+  g_keyboard = new KeyboardState();
   game = new Game();
 }
 
@@ -19,11 +21,16 @@ void draw(){
 }
 
 void keyReleased(){
-  game.updateKeysReleased(key);
+  if(game.getState() !=  GAME_STATES.GAME_MENU){
+      g_keyboard.updateKeyReleased(key);
+    }
 }
 void keyPressed(){
-  game.updateKeysPressed(key);
   Ball b = game.getBall();
+
+  if(game.getState() !=  GAME_STATES.GAME_MENU){
+      g_keyboard.updateKeyPressed(key);
+  }
 
   if(g_inputManager.getContext("Debug").getAction("Debug")){
     game.changeDebug();

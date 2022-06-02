@@ -8,7 +8,6 @@ class Game{
   int             m_activePlayers;
   int             m_menuChoice;
 
-  KeyboardState   m_keyboard;
   InputContext[]  m_contexts;
 
   float           m_currentTime;
@@ -27,7 +26,6 @@ class Game{
   }
 
   void init(){
-    m_keyboard = new KeyboardState();
     m_deltaTime =     0.0f;
     m_currentTime =   0.0f;
     m_lastTime =      0.0f;
@@ -56,14 +54,14 @@ class Game{
 
     initControllerContexts();
     loadController("controller.dante");
-    startServe(m_players[1],m_players[0],m_ball);
+    startServe(m_players[0],m_players[1],m_ball);
 
   }
   void initControllerContexts(){
     // from 0 to 3 are players contexts
     // 1 context for debug = 4 contexts;
     for (int i = 0; i < 5; i++){
-      m_contexts[i] = new InputContext(m_keyboard);
+      m_contexts[i] = new InputContext(g_keyboard);
     }
     g_inputManager.addContext(m_players[0].m_name,m_contexts[0]);
     g_inputManager.addContext(m_players[1].m_name,m_contexts[1]);
@@ -105,16 +103,6 @@ class Game{
     }
   }
 
-  void updateKeysReleased(int k){
-    if(m_state != GAME_STATES.GAME_MENU){
-      m_keyboard.updateKeyReleased(k);
-    }
-  }
-  void updateKeysPressed(int k){
-    if(m_state != GAME_STATES.GAME_MENU){
-      m_keyboard.updateKeyPressed(k);
-    }
-  }
 
   void updateMenu(){
     if(CollisionRP(float(width/2 - 30), float(height/2 + 50), float(60),float(30),float(mouseX),float(mouseY))){
@@ -170,7 +158,7 @@ class Game{
         }
       }
     }
-    m_keyboard.update();
+    g_keyboard.update();
 
   }
 
@@ -305,6 +293,9 @@ class Game{
   void changeDebug(){
     m_debug =! m_debug;
   }
+  GAME_STATES getState(){
+    return m_state;
+  }
   // Start any serve of the game
   void startServe(Player serve, Player reciever, Ball b){
     b.startServe();
@@ -365,7 +356,7 @@ class Game{
     int difference = abs(p1.getScore() - p2.getScore());
     // This doesn't work when we have same points in advantage mode
     if(difference < 2 && difference >= 0 && (p1.getScore() > 0 || p2.getScore() > 0) && p1.getScore() <= 10 && p2.getScore() <= 10){
-      if (side == 1 && b.getLastHit() == p1 || side == 1 && b.getLastHit() == p2){
+      if ((side == 1 && b.getLastHit() == p1 && b.isInside()) || side == 1 && b.getLastHit() == p2){
         p1.addScore(1);
       }
       else{
@@ -384,9 +375,9 @@ class Game{
       }
     }
     else{
-      if (side == 1 && b.getLastHit() == p1 || side == 1 && b.getLastHit() == p2){
+      if ((side == 1 && b.getLastHit() == p1 && b.isInside()) || (side == 1 && b.getLastHit() == p2) || (side == 2 && b.getLastHit() == p2 && !b.isInside())){
         // Player one Won
-        if(p1.getScore() >= 40 && p2.getScore() != 40){
+        if(p1.getScore() == 40 && p2.getScore() != 40){
           p1.addGame();
           startGame(reciever,server,b);
         }
@@ -404,7 +395,7 @@ class Game{
           p1.addScore(15);
         }
       }
-      else  {
+      else if((side == 2 && b.getLastHit() == p2 && b.isInside()) || (side == 2 && b.getLastHit() == p1) || (side == 1 && b.getLastHit() == p1 && !b.isInside())){
         // Player two Won
         if(p2.getScore() >= 40 && p1.getScore() != 40){
             p2.addGame();

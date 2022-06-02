@@ -22,8 +22,10 @@ class Ball{
 
   // Ball States
   int     m_side;
-  boolean m_showShadow;
+  boolean m_inside;
+  boolean m_firstHit;
   BALL_STATES m_state;
+
 
   float serveKickDuration;
   float elapsedTime;
@@ -38,6 +40,8 @@ class Ball{
     m_color = color(190,190,0);
     m_vel = new PVector(0,1);
     m_velZ = 1;
+    m_inside = false;
+    m_firstHit = true;
 
     m_currentMaxHeight = BALL_MAX_HEIGHT;
     m_currentHeight = 0;
@@ -56,10 +60,12 @@ class Ball{
     m_color = color(190,190,0);
     m_vel = new PVector(0,0);
     m_velZ = 2;
+    m_inside = false;
 
     m_currentMaxHeight = BALL_MAX_HEIGHT;
     m_currentHeight = 0;
     m_kickCount = 0;
+    m_firstHit = true;
 
     serveKickDuration = 0.6;
     elapsedTime = 0;
@@ -72,6 +78,8 @@ class Ball{
     m_color = color(190,190,0);
     m_vel = new PVector(0,0);
     m_velZ = 2;
+    m_inside = false;
+    m_firstHit = true;
 
     m_currentMaxHeight = BALL_MAX_HEIGHT;
     m_currentHeight = 0;
@@ -87,8 +95,15 @@ class Ball{
       kickBallAnimation();
     }
     else if (g.isServing()){
-      simulateThrow(); // This makes the ball Z thrust up and start our game going
-      g.endServing();
+      if(m_state != BALL_STATES.THROWING && m_state != BALL_STATES.SERVING){
+        simulateThrow(); // This makes the ball Z thrust up and start our game going
+      }
+      else if(m_state == BALL_STATES.SERVING){
+        g.endServing();
+      }
+      else{
+        simulateHeight2();
+      }
     }
     else if(g.isInGame() ){
       simulateHeight();
@@ -122,7 +137,7 @@ class Ball{
 
   void simulateThrow(){
     m_velZ = 116; // MAGIC NUMBER
-    m_state = BALL_STATES.SERVING;
+    m_state = BALL_STATES.THROWING;
   }
 
   void simulateHeight(){
@@ -139,6 +154,7 @@ class Ball{
         return;
       }
       if(m_currentHeight <= 0){
+        m_firstHit = false;
         m_currentHeight = 0;
         m_currentMaxHeight = m_currentMaxHeight * BALL_MAXHEIGHT_DECREASE_PERCENTAGE;
         m_velZ = - m_velZ * BALL_Z_DECREASE_PERCENTAGE;
@@ -146,6 +162,18 @@ class Ball{
       }
       else if (m_currentHeight >= m_currentMaxHeight){
         m_currentHeight = m_currentMaxHeight;
+      }
+      else if(m_state == BALL_STATES.THROWING && m_velZ <= 0){
+          m_state = BALL_STATES.SERVING;
+      }
+  }
+  void simulateHeight2(){
+
+      m_velZ -= GRAVITY * getDeltaTime();
+      m_currentHeight += m_velZ * getDeltaTime();
+
+      if(m_state == BALL_STATES.THROWING && m_velZ <= 0){
+          m_state = BALL_STATES.SERVING;
       }
   }
   // ===============================================================================
@@ -234,9 +262,11 @@ class Ball{
     if(!CollisionPTrapeze(pos.x,pos.y,c.getAngle(),c.getVertices()) && m_currentHeight == 0){
       if(m_state == BALL_STATES.PLAYING){
         m_state = BALL_STATES.OUT;
+        m_inside = false;
       }
     }
     else if (CollisionPTrapeze(pos.x,pos.y,c.getAngle(),c.getVertices()) && m_currentHeight == 0){
+      m_inside = true;
       if(m_lastHit.getSide() == m_side && m_state == BALL_STATES.PLAYING){
         m_state = BALL_STATES.STOPPED;
       }
@@ -252,6 +282,9 @@ class Ball{
   }
   float getCurrentHeight(){
     return m_currentHeight;
+  }
+  BALL_STATES getState(){
+    return m_state;
   }
   float getMaxHeight(){
     return BALL_MAX_HEIGHT;
@@ -309,6 +342,9 @@ class Ball{
 
   // ==========================================================================
   // Helpers =================================================================
+  boolean isInside(){
+    return m_inside;
+  }
   PVector getBallPosition(){
     return new PVector(m_x,m_y - m_currentHeight);
   }
@@ -338,6 +374,9 @@ class Ball{
   }
   boolean isServing(){
     return (m_state == BALL_STATES.SERVING);
+  }
+  boolean isFirstHit(){
+    return (m_firstHit);
   }
   void startServe(){
     init(0,640,15);
