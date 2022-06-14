@@ -1,12 +1,17 @@
 // Setting Global Variables;
 Game CandyCrush;
-HashMap<CANDYTYPES,Integer> m_colors;
+HashMap<String,Integer> COLORS = new HashMap<String,Integer>();
 
 // Setup Initial State
 void setup(){
-  size(400,400);
+  size(600,600);
   CandyCrush = new Game(0);
-  m_colors = new HashMap<CANDYTYPES,Integer>();
+  COLORS.put("RED",color(200,0,0));
+  COLORS.put("GREEN",color(0,200,0));
+  COLORS.put("YELLOW",color(200,200,0));
+  COLORS.put("BLUE",color(0,0,200));
+  COLORS.put("BLACK",color(0,0,0));
+  COLORS.put("CYAN",color(0,200,200));
 }
 
 // GameLoop
@@ -14,24 +19,10 @@ void draw(){
   background(0);
   CandyCrush.play();
 }
-//INPUT FUNCTIONS
-void mousePressed(){
-  if (mouseButton == LEFT){
-    Board board = CandyCrush.m_board;
-    Candy candy = board.getCandy(board.mouseToGridX(),board.mouseToGridY());
-    if (candy != null && CandyCrush.m_choice1 == null){
-      CandyCrush.m_choice1 = candy;
-      candy.m_selected = true;
-    }
-    else if (candy != null && CandyCrush.m_choice1 != null){
-      CandyCrush.m_choice2 = candy;
-      candy.m_selected = true;
-      CandyCrush.swap();
-    }
-  }
-}
 
 void keyPressed(){
-  CandyCrush.handleInput(key);
+  if(CandyCrush.getPlayer() != null){
+    CandyCrush.getPlayer().handleInput(key);
+  }
 }
 

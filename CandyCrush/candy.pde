@@ -8,20 +8,18 @@ enum CANDYTYPES{
 };
 
 class Candy{
-  Candy(int x, int y, int l_color){
-    m_color = l_color;
-    m_x = x;
-    m_y = 12y;
-    m_type = CANDYTYPES.RED;
-    m_selected = false;
-  }
 
-  color m_color;
   CANDYTYPES m_type;
   int m_x;
   int m_y;
   boolean m_selected;
 
+  Candy(int x, int y, CandyCrush.CANDYTYPES type){
+    m_x = x;
+    m_y = y;
+    m_type = type;
+    m_selected = false;
+  }
 }
 
 class Swap{
