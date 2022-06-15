@@ -109,12 +109,12 @@ class Player{
   }
 
   void swap(Board b){
-    Candy first = getCandy(m_selectionOne, b.m_candys);
-    Candy second = getCandy(m_selectionTwo, b.m_candys);
-
-    CANDYTYPES temp = first.m_type;
-    first.m_type = second.m_type;
-    second.m_type = temp;
+    /* Candy first = getCandy(m_selectionOne, b.m_candys); */
+    /* Candy second = getCandy(m_selectionTwo, b.m_candys); */
+    /**/
+    /* CANDYTYPES temp = first.m_type; */
+    /* first.m_type = second.m_type; */
+    /* second.m_type = temp; */
 
     m_selectionOne = -1;
     m_selectionTwo = -1;
@@ -138,6 +138,7 @@ class Player{
     }
     return m_startSwap;
   }
+
   boolean hasMatch(int posx, int posy, int targetx, int targety){
     Candy current = getCandy(posx,posy,m_board.m_candys);
     Candy target = getCandy(targetx,targety, m_board.m_candys);
@@ -151,6 +152,7 @@ class Player{
     // Creating an Map of Candy Matches so we can iterate over and destroy them
     // later
     HashMap<Candy,ArrayList<Candy>> matchedCandys = new HashMap<Candy,ArrayList<Candy>>();
+    ArrayList<ArrayList<Candy>> matchedCandys2 = new ArrayList<ArrayList<Candy>>();
     println("=======LOOKING FOR MATCH STARTING AT: " + targetx + "," + targety + "=======");
     println("================WITH COLOR: " + target.m_type + "=============");
     // Creating an horizontal candy list for inserting candy's that are next to us
@@ -183,8 +185,13 @@ class Player{
     if(matchedCandys.size() > 0){
       // We are unswapping our target candy's to another test
       // If we have more than one matches we should empty our current type
-      target.m_type = current.m_type;
-      current.m_type = CANDYTYPES.EMPTY;
+      println("Before: ");
+      print(" Current: " + current.m_type);
+      println(" Target: " + target.m_type);
+      target.m_type = CANDYTYPES.EMPTY;
+      println("After: ");
+      print(" Current: " + current.m_type);
+      print(" Target: " + target.m_type);
       return true;
     }
     // We should unswap even if there are no matches
@@ -192,6 +199,7 @@ class Player{
     temp = target.m_type;
     target.m_type = current.m_type;
     current.m_type = temp;
+    resetSelection();
     return false;
   }
 
@@ -222,6 +230,7 @@ class Player{
       }
       return result;
   }
+
   ArrayList<Candy> findMatchVertical(int column, int row, CANDYTYPES type, Board b){
       ArrayList<Candy> result = new ArrayList<Candy>();
       println("After Vertical =============");
