@@ -5,6 +5,7 @@ enum CANDYTYPES{
   BLUE,
   BLACK,
   CYAN,
+  EMPTY,
 };
 
 class Candy{

@@ -12,6 +12,7 @@ void setup(){
   COLORS.put("BLUE",color(0,0,200));
   COLORS.put("BLACK",color(0,0,0));
   COLORS.put("CYAN",color(0,200,200));
+  COLORS.put("EMPTY",color(255,255,255));
 }
 
 // GameLoop

@@ -45,8 +45,11 @@ class Board{
   void drawCandys(){
     for (int y = 0; y < BOARD_ROWS; y++){
       for (int x = 0; x < BOARD_COLUMNS; x++){
-        fill(COLORS.get(getCandy(x,y,m_candys).m_type.name()));
-        circle((x * m_rectSize + m_rectSize/2),(y * m_rectSize + m_rectSize/2),m_candySize);
+        Candy ourCandy = getCandy(x,y,m_candys);
+        if(ourCandy.m_type != CANDYTYPES.EMPTY){
+          fill(COLORS.get(ourCandy.m_type.name()));
+          circle((x * m_rectSize + m_rectSize/2),(y * m_rectSize + m_rectSize/2),m_candySize);
+        }
         fill(255,255,255);
         text(x + "," + y, x * m_rectSize + m_rectSize/4, (1+y) * m_rectSize);
       }
