@@ -28,7 +28,7 @@ class Player{
 
   }
 
-  void update(Board b){
+  void update(float dt, Board b){
     if(checkSwap(b)){
       swap(b);
     }
@@ -41,22 +41,20 @@ class Player{
   }
   void drawSelection(color selectionColor){
     if(m_board != null){
-      int size = m_board.getRectSize();
       PVector pos1 = convert1Dto2D(m_selectionOne);
       PVector pos2 = convert1Dto2D(m_selectionTwo);
       pushStyle();
       fill(selectionColor);
-      rect(pos1.x * size, pos1.y * size, size, size);
-      rect(pos2.x * size, pos2.y * size, size, size);
+      rect(pos1.x * RECT_SIZE, pos1.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+      rect(pos2.x * RECT_SIZE, pos2.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
       popStyle();
     }
   }
   void drawPosition(float x, float y, color positionColor){
     if(m_board != null){
-      int size = m_board.getRectSize();
       pushStyle();
       fill(positionColor);
-      rect(x*size,y*size,size,size);
+      rect(x*RECT_SIZE,y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
       popStyle();
     }
   }
@@ -118,8 +116,8 @@ class Player{
       Candy first = getCandy(m_selectionOne, b.m_candys);
       Candy second = getCandy(m_selectionTwo, b.m_candys);
 
-      if(hasMatch(first.m_x,first.m_y,second.m_x,second.m_y)) {
-        hasMatch(second.m_x,second.m_y,first.m_x,first.m_y);
+      if(hasMatch(int(first.m_x),int(first.m_y),int(second.m_x),int(second.m_y))) {
+        hasMatch(int(second.m_x),int(second.m_y),int(first.m_x),int(first.m_y));
         m_shouldTest = false;
         m_startSwap = true;
         return m_startSwap;
