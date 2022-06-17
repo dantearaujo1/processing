@@ -32,9 +32,6 @@ class Player{
     if(checkSwap(b)){
       swap(b);
     }
-    /* else{ */
-    /*   resetSelection(); */
-    /* } */
   }
 
   void draw(){
@@ -109,13 +106,8 @@ class Player{
   }
 
   void swap(Board b){
-    /* Candy first = getCandy(m_selectionOne, b.m_candys); */
-    /* Candy second = getCandy(m_selectionTwo, b.m_candys); */
-    /**/
-    /* CANDYTYPES temp = first.m_type; */
-    /* first.m_type = second.m_type; */
-    /* second.m_type = temp; */
 
+    b.updateGravity();
     m_selectionOne = -1;
     m_selectionTwo = -1;
     m_startSwap = false;
@@ -127,16 +119,13 @@ class Player{
       Candy second = getCandy(m_selectionTwo, b.m_candys);
 
       if(hasMatch(first.m_x,first.m_y,second.m_x,second.m_y)) {
+        hasMatch(second.m_x,second.m_y,first.m_x,first.m_y);
         m_shouldTest = false;
         m_startSwap = true;
+        return m_startSwap;
       }
-      if(hasMatch(second.m_x,second.m_y,first.m_x,first.m_y)){
-        m_shouldTest = false;
-        m_startSwap = true;
-      }
-      return m_startSwap;
     }
-    return m_startSwap;
+    return false;
   }
 
   boolean hasMatch(int posx, int posy, int targetx, int targety){
@@ -151,8 +140,7 @@ class Player{
 
     // Creating an Map of Candy Matches so we can iterate over and destroy them
     // later
-    HashMap<Candy,ArrayList<Candy>> matchedCandys = new HashMap<Candy,ArrayList<Candy>>();
-    ArrayList<ArrayList<Candy>> matchedCandys2 = new ArrayList<ArrayList<Candy>>();
+    ArrayList<ArrayList<Candy>> matchedCandys = new ArrayList<ArrayList<Candy>>();
     println("=======LOOKING FOR MATCH STARTING AT: " + targetx + "," + targety + "=======");
     println("================WITH COLOR: " + target.m_type + "=============");
     // Creating an horizontal candy list for inserting candy's that are next to us
@@ -163,35 +151,30 @@ class Player{
 
     // If we have 2 or more candy with the same type in horizontal we should add a match
     if(horizontalMatches.size() >= 2 ){
-      matchedCandys.put(target,horizontalMatches);
+      matchedCandys.add(horizontalMatches);
     }
 
     // If we have 2 or more candy with the same type in vertical we should add a match
     if(verticalMatches.size() >= 2){
-        matchedCandys.put(target,verticalMatches);
+        matchedCandys.add(verticalMatches);
     }
 
     // Going for everyMatch entry and changing candy types to empty
     // This will change other candy's than the current and target
     // We need to solve them later
-    for(HashMap.Entry<Candy,ArrayList<Candy>> candyEntry : matchedCandys.entrySet()){
-      for (int i = 0; i < candyEntry.getValue().size(); i++){
-        Candy candy = candyEntry.getValue().get(i);
+    for(ArrayList<Candy> candyList : matchedCandys){
+      for (int i = 0; i < candyList.size(); i++){
+        Candy candy = candyList.get(i);
         candy.m_type = CANDYTYPES.EMPTY;
       }
     }
 
     // If we have matches return true
     if(matchedCandys.size() > 0){
+
       // We are unswapping our target candy's to another test
       // If we have more than one matches we should empty our current type
-      println("Before: ");
-      print(" Current: " + current.m_type);
-      println(" Target: " + target.m_type);
       target.m_type = CANDYTYPES.EMPTY;
-      println("After: ");
-      print(" Current: " + current.m_type);
-      print(" Target: " + target.m_type);
       return true;
     }
     // We should unswap even if there are no matches
