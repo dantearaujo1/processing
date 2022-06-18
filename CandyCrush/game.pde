@@ -24,7 +24,7 @@ class Game{
     if (m_deltaTime >= DT){
       m_deltaTime -= DT;
 
-      m_player.update(DT,m_board);
+      m_player.update(DT);
       m_board.update(DT);
 
       m_board.draw();

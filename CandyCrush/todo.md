@@ -6,4 +6,5 @@
 
 
 // BUG:
-[] - When make an swap, the second candy is being checked with empty type
+[X] - When make an swap, the second candy is being checked with empty type
+[ ] - When first selecting, candy in position 0 or (0,0) doesn't get picked.

@@ -4,7 +4,10 @@ class Board{
   boolean m_animationEnd;
 
   Board(){
+    init();
+  }
 
+  void init(){
     m_candys = new Candy[BOARD_ROWS][BOARD_COLUMNS];
     for (int y = 0; y < BOARD_ROWS; y++){
       for (int x = 0; x < BOARD_COLUMNS; x++){
