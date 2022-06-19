@@ -1,7 +1,6 @@
 class Board{
 
   Candy[][] m_candys;
-  boolean m_animationEnd;
 
   Board(){
     init();
@@ -12,9 +11,8 @@ class Board{
     for (int y = 0; y < BOARD_ROWS; y++){
       for (int x = 0; x < BOARD_COLUMNS; x++){
         CANDYTYPES type = CANDYTYPES.values()[int(random(CANDYTYPES.values().length - 1))];
-        m_candys[y][x] = new Candy((x),(y),type);
+        m_candys[y][x] = new Candy(x,y,type);
       }
-      m_animationEnd = false;
     }
   }
 

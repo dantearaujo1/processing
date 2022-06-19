@@ -31,7 +31,7 @@ class Player{
 
   void update(float dt){
     if(checkSwap()){
-      swap();
+      swap(dt);
     }
   }
 
@@ -90,7 +90,7 @@ class Player{
   }
 
   void select(){
-    if(m_selectionOne > 0){
+    if(m_selectionOne >= 0){
       if(m_position == offset(m_selectionOne,"North",BOARD_COLUMNS) || m_position == offset(m_selectionOne,"South",BOARD_COLUMNS) || m_position == offset(m_selectionOne,"East",BOARD_COLUMNS) || m_position == offset(m_selectionOne,"West",BOARD_COLUMNS)){
         m_selectionTwo = m_position;
         m_shouldTest = true;
@@ -101,17 +101,14 @@ class Player{
     m_selectionOne = m_position;
   }
 
-  void swap(){
+  void swap(float dt){
 
     Candy first = getCandy(m_selectionOne, m_board.m_candys);
     Candy second = getCandy(m_selectionTwo, m_board.m_candys);
-    println("INSIDE SWAP");
-    println("Current: " + first.m_type);
-    println("Target: " + second.m_type);
 
-    CANDYTYPES temp = second.m_type;
+    Candy temp = second;
     second.m_type = first.m_type;
-    first.m_type = temp;
+    first.m_type = temp.m_type;
 
     m_board.updateGravity();
     m_selectionOne = -1;
