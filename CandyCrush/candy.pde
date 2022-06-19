@@ -13,6 +13,8 @@ class Candy{
   CANDYTYPES m_type;
   float m_x;
   float m_y;
+  int m_gridX;
+  int m_gridY;
   float m_startX;
   float m_startY;
 
@@ -26,8 +28,10 @@ class Candy{
   Candy(int x, int y, CandyCrush.CANDYTYPES type){
     m_x = x;
     m_y = y;
+    m_gridX = x;
+    m_gridX = y;
     m_startX = x;
-    m_startY = 0.0;
+    m_startY = -y;
     m_type = type;
 
     m_anim = true;
@@ -58,8 +62,7 @@ class Candy{
     }
   }
 
-  float interpolation(float st, float end, float percentage){
-    return st + (end - st) * percentage;
-  }
 }
+
+
 
