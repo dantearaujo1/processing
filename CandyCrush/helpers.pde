@@ -48,7 +48,7 @@
   }
 
   float interpolation(float st, float end, float percentage){
-    return st + (end - st) * percentage;
+    return (st + (end - st) * percentage);
   }
 
   float flip(float percentage){
@@ -58,5 +58,5 @@
     return x * x;
   }
   float easeOut(float x){
-    return flip(easeIn(x));
+    return flip(easeIn(flip(x)));
   }
