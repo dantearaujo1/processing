@@ -31,7 +31,7 @@ class Player{
 
   void update(float dt){
     if(checkSwap()){
-      swap(dt);
+      swap();
     }
   }
 
@@ -46,8 +46,13 @@ class Player{
       PVector pos2 = convert1Dto2D(m_selectionTwo);
       pushStyle();
       fill(selectionColor);
-      rect(pos1.x * RECT_SIZE, pos1.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
-      rect(pos2.x * RECT_SIZE, pos2.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+      if(pos1.x >= 0 && pos1.y >= 0){
+        rect(m_board.m_x + pos1.x * RECT_SIZE, m_board.m_y + pos1.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+      }
+      if(pos2.x >=0 && pos2.y >= 0){
+        rect(m_board.m_x + pos2.x * RECT_SIZE, m_board.m_y + pos2.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+      }
+
       popStyle();
     }
   }
@@ -55,7 +60,9 @@ class Player{
     if(m_board != null){
       pushStyle();
       fill(positionColor);
-      rect(x*RECT_SIZE,y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
+      rect(m_board.m_x + x*RECT_SIZE,m_board.m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
+      stroke(255,0,0);
+      text(getCandy(m_position,m_board.m_candys).m_type.name(),0,height-100);
       popStyle();
     }
   }
@@ -96,21 +103,20 @@ class Player{
         m_shouldTest = true;
         return;
       }
+      resetSelection();
       return;
     }
     m_selectionOne = m_position;
   }
 
-  void swap(float dt){
+  void swap(){
 
     Candy first = getCandy(m_selectionOne, m_board.m_candys);
     Candy second = getCandy(m_selectionTwo, m_board.m_candys);
 
-    Candy temp = second;
-    second.m_type = first.m_type;
-    first.m_type = temp.m_type;
+    SwapData data = new SwapData(first,second);
+    m_board.swap(data);
 
-    m_board.updateGravity();
     m_selectionOne = -1;
     m_selectionTwo = -1;
     m_startSwap = false;
@@ -124,38 +130,15 @@ class Player{
       Candy first = getCandy(m_selectionOne, m_board.m_candys);
       Candy second = getCandy(m_selectionTwo, m_board.m_candys);
 
-      ArrayList<ArrayList<Candy>> targetMatches = new ArrayList<ArrayList<Candy>>();
-      ArrayList<ArrayList<Candy>> swappedMatches = new ArrayList<ArrayList<Candy>>();
+      ArrayList<Candy> targetMatches = new ArrayList<Candy>();
+      ArrayList<Candy> swappedMatches = new ArrayList<Candy>();
       targetMatches = hasMatch(int(first.m_x),int(first.m_y),int(second.m_x),int(second.m_y));
       swappedMatches = hasMatch(int(second.m_x),int(second.m_y),int(first.m_x),int(first.m_y));
 
-      if(targetMatches.size() > 0){
-        println("TargetMatches");
-        for(ArrayList<Candy> candyList : targetMatches){
-          for (int i = 0; i < candyList.size(); i++){
-            Candy candy = candyList.get(i);
-            print(candy.m_type + ",");
-            candy.m_type = CANDYTYPES.EMPTY;
-          }
-          println();
-        }
-        first.m_type = CANDYTYPES.EMPTY;
-      }
-
-      if(swappedMatches.size() > 0){
-        println("SwappedMatches");
-        for(ArrayList<Candy> candyList : swappedMatches){
-          for (int i = 0; i < candyList.size(); i++){
-            Candy candy = candyList.get(i);
-            print(candy.m_type);
-            candy.m_type = CANDYTYPES.EMPTY;
-          }
-          println();
-        }
-        second.m_type = CANDYTYPES.EMPTY;
-      }
-
       if(swappedMatches.size() > 0 || targetMatches.size()>0){
+        m_board.setCandysToDelete(swappedMatches);
+        m_board.setCandysToDelete(targetMatches);
+
         m_startSwap = true;
         return m_startSwap;
       }
@@ -167,7 +150,7 @@ class Player{
     return m_startSwap;
   }
 
-  ArrayList<ArrayList<Candy>> hasMatch(int posx, int posy, int targetx, int targety){
+  ArrayList<Candy> hasMatch(int posx, int posy, int targetx, int targety){
     Candy current = getCandy(posx,posy,m_board.m_candys);
     Candy target = getCandy(targetx,targety, m_board.m_candys);
 
@@ -182,9 +165,9 @@ class Player{
     target.m_type = current.m_type;
     current.m_type = temp;
 
-    // Creating an Map of Candy Matches so we can iterate over and destroy them
+    // Creating an List of Candy's that Matche so we can iterate over and destroy them
     // later
-    ArrayList<ArrayList<Candy>> matchedCandys = new ArrayList<ArrayList<Candy>>();
+    ArrayList<Candy> matchedCandys = new ArrayList<Candy>();
 
     if(target.m_type == current.m_type){
       return matchedCandys;
@@ -192,7 +175,7 @@ class Player{
 
     // Creating an horizontal candy list for inserting candy's that are next to us
     ArrayList<Candy> horizontalMatches = findMatchHorizontal(targetx,targety,target.m_type,m_board);
-    // Adding our target position to the matches list so we can empty them later
+    // Adding our target position to the matches list so we can check him later
     horizontalMatches.add(target);
 
 
@@ -206,8 +189,9 @@ class Player{
         Candy sideCandy = horizontalMatches.get(side);
         horizontalMatches.addAll(findMatchVertical(int(sideCandy.m_x),int(sideCandy.m_y),target.m_type,m_board));
       }
+      horizontalMatches.get(repeatTime-1).m_deleteAnim = true;
       horizontalMatches.remove(repeatTime-1);
-      matchedCandys.add(horizontalMatches);
+      matchedCandys.addAll(horizontalMatches);
     }
 
     // Creating an vertical candy list for inserting candy's that are next to us
@@ -219,16 +203,22 @@ class Player{
       int repeatTime = verticalMatches.size();
       for(int side = 0; side < repeatTime; side++){
         Candy sideCandy = verticalMatches.get(side);
+        sideCandy.m_deleteAnim = true;
         verticalMatches.addAll(findMatchHorizontal(int(sideCandy.m_x),int(sideCandy.m_y),target.m_type,m_board));
       }
+      verticalMatches.get(repeatTime-1).m_deleteAnim = true;
       verticalMatches.remove(repeatTime-1);
-      matchedCandys.add(verticalMatches);
+      matchedCandys.addAll(verticalMatches);
     }
 
     temp = target.m_type;
     target.m_type = current.m_type;
     current.m_type = temp;
 
+    for (Candy c : matchedCandys){
+      c.m_deleteAnim = true;
+      c.m_currentDuration = 0.0;
+    }
     return matchedCandys;
   }
 
