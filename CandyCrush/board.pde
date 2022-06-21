@@ -18,7 +18,7 @@ class Board{
         m_candys[y][x] = new Candy(x,y,type);
       }
     }
-    m_x = width * 0.15;
+    m_x = width/2 - BOARD_COLUMNS * RECT_SIZE/2 ;
     m_y = height * 0.05;
   }
 
@@ -68,24 +68,22 @@ class Board{
 
       Candy first = playerSwap.m_first;
       Candy second = playerSwap.m_second;
-      int px1 = first.m_gridX;
-      int px2 = second.m_gridX;
-      int py1 = first.m_gridY;
-      int py2 = second.m_gridY;
 
       Candy temp = first.copy();
 
-      m_candys[py1][px1].m_gridX = m_candys[py2][px2].m_gridX;
-      m_candys[py1][px1].m_gridY = m_candys[py2][px2].m_gridY;
-      m_candys[py1][px1].m_type = m_candys[py2][px2].m_type;
-      m_candys[py1][px1].m_swapAnim = true;
-      m_candys[py1][px1].m_currentDuration = 0.0;
+      first.m_endX = second.m_x;
+      first.m_endY = second.m_y;
+      first.m_startY = first.m_y;
+      first.m_type = second.m_type;
+      first.m_swapAnim = true;
+      first.m_currentDuration = 0.0;
 
-      m_candys[py2][px2].m_gridX = temp.m_gridX;
-      m_candys[py2][px2].m_gridY = temp.m_gridY;
-      m_candys[py2][px2].m_type = temp.m_type;
-      m_candys[py2][px2].m_swapAnim = true;
-      m_candys[py2][px2].m_currentDuration = 0.0;
+      second.m_endX = temp.m_x;
+      second.m_endY = temp.m_y;
+      second.m_startY = second.m_y;
+      second.m_type = temp.m_type;
+      second.m_swapAnim = true;
+      second.m_currentDuration = 0.0;
     }
   }
 

@@ -37,8 +37,13 @@ class Player{
 
   void draw(){
     PVector p = convert1Dto2D(m_position);
+    PVector p1 = convert1Dto2D(m_selectionOne);
+    PVector p2 = convert1Dto2D(m_selectionTwo);
     drawSelection(color(200,200,0));
     drawPosition(p.x,p.y,color(0,220,50));
+    fill(255,0,0);
+    text("Selection one: " + p1.x + "," + p1.y,0, height - 90);
+    text("Selection two: " + p2.x + "," + p2.y,0, height - 75);
   }
   void drawSelection(color selectionColor){
     if(m_board != null){
@@ -63,6 +68,10 @@ class Player{
       rect(m_board.m_x + x*RECT_SIZE,m_board.m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
       stroke(255,0,0);
       text(getCandy(m_position,m_board.m_candys).m_type.name(),0,height-100);
+      text("GridX: " + getCandy(m_position,m_board.m_candys).m_gridX,35,height-100);
+      text("GridY: " + getCandy(m_position,m_board.m_candys).m_gridY,90,height-100);
+      text("X: " + getCandy(m_position,m_board.m_candys).m_x,130,height-100);
+      text("Y: " + getCandy(m_position,m_board.m_candys).m_y,170,height-100);
       popStyle();
     }
   }
@@ -189,7 +198,9 @@ class Player{
         Candy sideCandy = horizontalMatches.get(side);
         horizontalMatches.addAll(findMatchVertical(int(sideCandy.m_x),int(sideCandy.m_y),target.m_type,m_board));
       }
+      // This should not be here
       horizontalMatches.get(repeatTime-1).m_deleteAnim = true;
+
       horizontalMatches.remove(repeatTime-1);
       matchedCandys.addAll(horizontalMatches);
     }
@@ -206,7 +217,9 @@ class Player{
         sideCandy.m_deleteAnim = true;
         verticalMatches.addAll(findMatchHorizontal(int(sideCandy.m_x),int(sideCandy.m_y),target.m_type,m_board));
       }
+      // This should not be here
       verticalMatches.get(repeatTime-1).m_deleteAnim = true;
+
       verticalMatches.remove(repeatTime-1);
       matchedCandys.addAll(verticalMatches);
     }
@@ -275,6 +288,7 @@ class Player{
     m_shouldTest = false;
     m_startSwap = false;
   }
+
   void reset(){
     m_position = 0;
     m_points = 0;

@@ -17,6 +17,8 @@ class Candy{
   int m_gridY;
   float m_startX;
   float m_startY;
+  float m_endX;
+  float m_endY;
 
   boolean m_selected;
 
@@ -30,13 +32,19 @@ class Candy{
   boolean m_deleteAnim;
 
 
+
   Candy(int x, int y, CandyCrush.CANDYTYPES type){
     m_x = x;
-    m_y = -2;
+    m_y = y;
+
     m_gridX = x;
     m_gridY = y;
+
     m_startX = x;
-    m_startY = y;
+    m_startY = -2;
+    m_endX = x;
+    m_endY = y;
+
     m_type = type;
 
     m_initialAnim = true;
@@ -70,9 +78,9 @@ class Candy{
       }
       else{
         fill(COLORS.get(m_type.name()));
-        stroke(0);
       }
       circle((offsetX + m_x * RECT_SIZE + RECT_SIZE/2),(offsetY + m_y * RECT_SIZE + RECT_SIZE/2),CANDY_SIZE);
+      stroke(0);
     }
   }
 
@@ -82,14 +90,14 @@ class Candy{
       m_initialAnim = false;
       m_currentDuration = m_initialAnimDuration;
     }
-    m_y = interpolation(-2,m_startY,m_currentDuration/m_initialAnimDuration);
+    m_y = interpolation(m_startY,m_endY,m_currentDuration/m_initialAnimDuration);
   }
   void deleteAnimation(float dt){
     m_currentDuration += dt;
     if(m_currentDuration >= m_deleteAnimDuration){
       m_deleteAnim = false;
-      m_currentDuration = m_deleteAnimDuration;
       m_type = CANDYTYPES.EMPTY;
+      m_currentDuration = m_deleteAnimDuration;
     }
   }
   void swapAnimation(float dt){
@@ -97,10 +105,9 @@ class Candy{
     if(m_currentDuration >= m_swapAnimDuration){
       m_swapAnim = false;
       m_currentDuration = m_swapAnimDuration;
-      /* m_type = CANDYTYPES.EMPTY; */
     }
-    m_y = interpolation(m_startY,m_gridY,flip(easeOut(m_currentDuration/m_swapAnimDuration)));
-    m_x = interpolation(m_startX,m_gridX,flip(easeOut(m_currentDuration/m_swapAnimDuration)));
+    m_y = interpolation(m_startY,m_endY,flip(easeOut(m_currentDuration/m_swapAnimDuration)));
+    m_x = interpolation(m_startX,m_endX,flip(easeOut(m_currentDuration/m_swapAnimDuration)));
   }
 
   Candy copy(){
