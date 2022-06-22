@@ -1,19 +1,20 @@
 class Game{
 
-  Board m_board;
-  Player m_player;
-  Candy m_choice1;
-  Candy m_choice2;
+  SceneManager m_director;
+  GameScene m_gameScene;
+  MenuScene m_menuScene;
 
   float           m_currentTime;
   float           m_deltaTime;
   float           m_lastTime;
   final float     DT = 1.0/60.0;
 
-  Game(int level){
-    m_board = new Board();
-    m_player = new Player();
-    m_player.setBoard(m_board);
+  Game(int level, PApplet app){
+    m_director = new SceneManager();
+    m_menuScene = new MenuScene(m_director,app);
+    m_gameScene = new GameScene(m_director);
+    m_director.addScene(m_gameScene);
+    m_director.addScene(m_menuScene);
   }
 
   void play(){
@@ -24,12 +25,7 @@ class Game{
     if (m_deltaTime >= DT){
       m_deltaTime -= DT;
 
-      m_player.update(DT);
-      m_board.update(DT);
-
-      m_board.draw();
-      m_player.draw();
-      m_board.lateDraw();
+      m_director.run(DT);
 
     }
   }
@@ -38,8 +34,8 @@ class Game{
 
   }
 
-  Player getPlayer(){
-    return m_player;
+  SceneManager getDirector(){
+    return m_director;
   }
 
 }

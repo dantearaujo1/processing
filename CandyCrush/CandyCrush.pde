@@ -5,7 +5,7 @@ HashMap<String,Integer> COLORS = new HashMap<String,Integer>();
 // Setup Initial State
 void setup(){
   size(600,600);
-  CandyCrush = new Game(0);
+  CandyCrush = new Game(0,this);
   COLORS.put("RED",color(200,0,0));
   COLORS.put("GREEN",color(0,200,0));
   COLORS.put("YELLOW",color(200,200,0));
@@ -22,8 +22,6 @@ void draw(){
 }
 
 void keyPressed(){
-  if(CandyCrush.getPlayer() != null){
-    CandyCrush.getPlayer().handleInput(key);
-  }
+  CandyCrush.getDirector().getScene().handleInput(int(key));
 }
 
