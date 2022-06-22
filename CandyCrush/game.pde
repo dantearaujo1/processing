@@ -12,7 +12,7 @@ class Game{
   Game(int level, PApplet app){
     m_director = new SceneManager();
     m_menuScene = new MenuScene(m_director,app);
-    m_gameScene = new GameScene(m_director);
+    m_gameScene = new GameScene(m_director,app);
     m_director.addScene(m_gameScene);
     m_director.addScene(m_menuScene);
   }
