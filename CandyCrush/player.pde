@@ -198,10 +198,6 @@ class Player{
         Candy sideCandy = horizontalMatches.get(side);
         horizontalMatches.addAll(findMatchVertical(int(sideCandy.m_x),int(sideCandy.m_y),target.m_type,m_board));
       }
-      // This should not be here
-      horizontalMatches.get(repeatTime-1).m_deleteAnim = true;
-
-      horizontalMatches.remove(repeatTime-1);
       matchedCandys.addAll(horizontalMatches);
     }
 
@@ -214,13 +210,9 @@ class Player{
       int repeatTime = verticalMatches.size();
       for(int side = 0; side < repeatTime; side++){
         Candy sideCandy = verticalMatches.get(side);
-        sideCandy.m_deleteAnim = true;
         verticalMatches.addAll(findMatchHorizontal(int(sideCandy.m_x),int(sideCandy.m_y),target.m_type,m_board));
       }
-      // This should not be here
-      verticalMatches.get(repeatTime-1).m_deleteAnim = true;
 
-      verticalMatches.remove(repeatTime-1);
       matchedCandys.addAll(verticalMatches);
     }
 

@@ -28,6 +28,7 @@ class Board{
         m_candys[y][x].update(dt);
       }
     }
+    deleteCandys();
     updateGravity();
   }
 
@@ -75,24 +76,29 @@ class Board{
       first.m_endY = second.m_y;
       first.m_startY = first.m_y;
       first.m_type = second.m_type;
-      first.m_swapAnim = true;
-      first.m_currentDuration = 0.0;
+      /* first.m_swapAnim = true; */
+      /* first.m_currentDuration = 0.0; */
 
       second.m_endX = temp.m_x;
       second.m_endY = temp.m_y;
       second.m_startY = second.m_y;
       second.m_type = temp.m_type;
-      second.m_swapAnim = true;
-      second.m_currentDuration = 0.0;
+      /* second.m_swapAnim = true; */
+      /* second.m_currentDuration = 0.0; */
     }
   }
 
   void deleteCandys(){
-    m_candysToDelete.clear();
+    m_candysToDelete.removeIf(candy -> (candy.m_type == CANDYTYPES.EMPTY));
+    /* m_candysToDelete.clear(); */
   }
 
   void setCandysToDelete(ArrayList<Candy> candys){
     m_candysToDelete.addAll(candys);
+    for(Candy c : m_candysToDelete){
+      c.m_deleteAnim = true;
+      c.m_currentDuration = 0.0;
+    }
   }
 
   void draw(){
