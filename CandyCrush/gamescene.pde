@@ -17,7 +17,6 @@ class GameScene implements IScene{
     m_board = new Board();
     m_player = new Player();
     m_player.setBoard(m_board);
-    textSize(8);
 
   }
 
@@ -40,17 +39,12 @@ class GameScene implements IScene{
   }
 
   void run(float dt){
-    this.update(dt);
-    this.draw();
-
-    this.lateUpdate(dt);
-    this.lateDraw();
-    m_timerCounter += dt;
   }
 
   void update(float dt){
     m_player.update(dt);
     m_board.update(dt);
+    m_timerCounter += dt;
   }
   void lateUpdate(float dt){
 
@@ -59,6 +53,7 @@ class GameScene implements IScene{
   void draw(){
     m_board.draw();
     m_player.draw();
+    text(int(m_timerCounter), m_board.m_x + RECT_SIZE * BOARD_COLUMNS/2, m_board.m_y - 10);
   }
 
   void lateDraw(){
