@@ -8,7 +8,6 @@ class Board{
 
   Board(){
     init();
-    /* m_shouldUpdateGravity; */
   }
 
   void init(){
