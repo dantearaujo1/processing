@@ -25,3 +25,7 @@ void keyPressed(){
   CandyCrush.getDirector().getScene().handleInput(int(key));
 }
 
+
+PApplet getPApplet(){
+  return this;
+}
