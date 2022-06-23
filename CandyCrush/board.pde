@@ -76,19 +76,24 @@ class Board{
       first.m_endY = second.m_y;
       first.m_startY = first.m_y;
       first.m_type = second.m_type;
-      /* first.m_swapAnim = true; */
-      /* first.m_currentDuration = 0.0; */
 
       second.m_endX = temp.m_x;
       second.m_endY = temp.m_y;
       second.m_startY = second.m_y;
       second.m_type = temp.m_type;
-      /* second.m_swapAnim = true; */
-      /* second.m_currentDuration = 0.0; */
     }
   }
 
   void deleteCandys(){
+    /* ArrayList<Candy> toDelete = new ArrayList<Candy>(); */
+    /* for (Candy c : m_candysToDelete){ */
+    /*   if(c.m_type == CANDYTYPES.EMPTY){ */
+    /*     toDelete.add(c): */
+    /*   } */
+    /* } */
+    /* for(Candy c : toDelete){ */
+    /*   m_candysToDelete.remove(c); */
+    /* } */
     m_candysToDelete.removeIf(candy -> (candy.m_type == CANDYTYPES.EMPTY));
     /* m_candysToDelete.clear(); */
   }
