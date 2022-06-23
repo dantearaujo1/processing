@@ -68,8 +68,8 @@ class Player{
       rect(m_board.m_x + x*RECT_SIZE,m_board.m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
       stroke(255,0,0);
       text(getCandy(m_position,m_board.m_candys).m_type.name(),0,height-100);
-      text("GridX: " + getCandy(m_position,m_board.m_candys).m_gridX,35,height-100);
-      text("GridY: " + getCandy(m_position,m_board.m_candys).m_gridY,90,height-100);
+      text("GridX: " + int(getCandy(m_position,m_board.m_candys).m_x),35,height-100);
+      text("GridY: " + int(getCandy(m_position,m_board.m_candys).m_y),90,height-100);
       text("X: " + getCandy(m_position,m_board.m_candys).m_x,130,height-100);
       text("Y: " + getCandy(m_position,m_board.m_candys).m_y,170,height-100);
       popStyle();
