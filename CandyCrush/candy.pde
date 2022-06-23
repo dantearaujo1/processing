@@ -13,8 +13,6 @@ class Candy{
   CANDYTYPES m_type;
   float m_x;
   float m_y;
-  int m_gridX;
-  int m_gridY;
   float m_startX;
   float m_startY;
   float m_endX;
@@ -36,10 +34,8 @@ class Candy{
   Candy(int x, int y, CandyCrush.CANDYTYPES type){
     m_x = x;
     m_y = -2;
-    m_gridX = x;
-    m_gridY = y;
     m_startX = x;
-    m_startY = y;
+    m_startY = -2;
     m_endX = x;
     m_endY = y;
     m_type = type;
@@ -47,7 +43,7 @@ class Candy{
     m_initialAnim = true;
     m_swapAnim = false;
     m_deleteAnim = false;
-    m_initialAnimDuration = 1.0;
+    m_initialAnimDuration = 2.0;
     m_swapAnimDuration = 0.4;
     m_currentDuration = 0.0;
     m_deleteAnimDuration = 1.0;
