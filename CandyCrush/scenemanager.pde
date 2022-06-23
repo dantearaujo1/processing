@@ -1,12 +1,14 @@
 class SceneManager{
   IScene m_currentScene;
+  IScene m_nextScene;
   ArrayList<IScene> m_scenes;
   ITransition m_transition;
 
   SceneManager(){
     m_scenes = new ArrayList<IScene>();
     m_currentScene = null;
-    m_transition = new FadeIn(0.3);
+    m_nextScene = null;
+    m_transition = new FadeIn(0.3,0.02);
   }
 
   void changeScene(IScene scene){
@@ -15,8 +17,23 @@ class SceneManager{
         if(s == scene){
           m_currentScene.onPause();
           m_transition.init();
-          m_currentScene = scene;
-          m_currentScene.onResume();
+          m_nextScene = scene;
+          /* m_currentScene = scene; */
+          /* m_currentScene.onResume(); */
+          return;
+        }
+      }
+      addScene(scene);
+    }
+  }
+  void changeScene(IScene scene, ITransition transition){
+    if(scene != null){
+      for(IScene s : m_scenes){
+        if(s == scene){
+          m_currentScene.onPause();
+          m_transition.init();
+          /* m_currentScene = scene; */
+          /* m_currentScene.onResume(); */
           return;
         }
       }
@@ -28,12 +45,16 @@ class SceneManager{
     if(scene != null){
       for(IScene s : m_scenes){
         if(s == scene){
+          m_currentScene.onPause();
+          m_nextScene = scene;
+          m_transition.init();
           m_currentScene = scene;
           m_currentScene.onResume();
           return;
         }
       }
       m_scenes.add(scene);
+      m_transition.init();
       m_currentScene = scene;
       m_currentScene.onInit();
 
@@ -56,6 +77,13 @@ class SceneManager{
   }
 
   void update(float dt){
+    if(m_nextScene != null){
+      if(m_transition.shouldSwap()){
+        m_currentScene = m_nextScene;
+        m_currentScene.onResume();
+        m_nextScene = null;
+      }
+    }
     m_transition.update(dt);
     m_currentScene.update(dt);
   }
