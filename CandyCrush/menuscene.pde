@@ -56,7 +56,7 @@ class MenuScene implements IScene{
   void Start(){
     Controller c = m_controlGUI.getController("Start");
     c.hide();
-    m_director.changeScene(CandyCrush.m_gameScene);
+    m_director.addScene(new GameScene(m_director,getPApplet()));
   }
 
   void handleInput(int k){

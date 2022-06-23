@@ -23,6 +23,9 @@ class GameScene implements IScene{
   void onInit(){
     textSize(8);
     m_timerCounter = 0.0;
+    m_board = new Board();
+    m_player = new Player();
+    m_player.setBoard(m_board);
   }
   void onExit(){
 
