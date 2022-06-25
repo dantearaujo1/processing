@@ -135,7 +135,9 @@ class Board{
         Candy ourCandy = m_candys[y][x];
         ourCandy.draw(m_x,m_y);
         fill(255,255,255);
-        text(x + "," + y, m_x + x * RECT_SIZE + RECT_SIZE/4, m_y + (1+y) * RECT_SIZE);
+        if(g_debug){
+          text(x + "," + y, m_x + x * RECT_SIZE + RECT_SIZE/4, m_y + (1+y) * RECT_SIZE);
+        }
       }
     }
   }

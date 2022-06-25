@@ -26,6 +26,7 @@ class Player{
     if (keyPressed == true && k == ' ') select();
     if (keyPressed == true && k == 'r') reset();
     if (keyPressed == true && k == 'q') resetBoard();
+    if (keyPressed == true && k == 'b') changeDebug();
 
   }
 
@@ -42,8 +43,10 @@ class Player{
     drawSelection(color(200,200,0));
     drawPosition(p.x,p.y,color(0,220,50));
     fill(255,0,0);
-    text("Selection one: " + p1.x + "," + p1.y,0, height - 90);
-    text("Selection two: " + p2.x + "," + p2.y,0, height - 75);
+    if(g_debug){
+      text("Selection one: " + p1.x + "," + p1.y,0, height - 90);
+      text("Selection two: " + p2.x + "," + p2.y,0, height - 75);
+    }
   }
   void drawSelection(color selectionColor){
     if(m_board != null){
@@ -67,11 +70,13 @@ class Player{
       fill(positionColor);
       rect(m_board.m_x + x*RECT_SIZE,m_board.m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
       stroke(255,0,0);
-      text(getCandy(m_position,m_board.m_candys).m_type.name(),0,height-100);
-      text("GridX: " + int(getCandy(m_position,m_board.m_candys).m_x),35,height-100);
-      text("GridY: " + int(getCandy(m_position,m_board.m_candys).m_y),90,height-100);
-      text("X: " + getCandy(m_position,m_board.m_candys).m_x,130,height-100);
-      text("Y: " + getCandy(m_position,m_board.m_candys).m_y,170,height-100);
+      if(g_debug){
+        text(getCandy(m_position,m_board.m_candys).m_type.name(),0,height-100);
+        text("GridX: " + int(getCandy(m_position,m_board.m_candys).m_x),35,height-100);
+        text("GridY: " + int(getCandy(m_position,m_board.m_candys).m_y),90,height-100);
+        text("X: " + getCandy(m_position,m_board.m_candys).m_x,130,height-100);
+        text("Y: " + getCandy(m_position,m_board.m_candys).m_y,170,height-100);
+      }
       popStyle();
     }
   }
@@ -163,10 +168,12 @@ class Player{
     Candy current = getCandy(posx,posy,m_board.m_candys);
     Candy target = getCandy(targetx,targety, m_board.m_candys);
 
-    println("================================");
-    println("Current type: " + current.m_type);
-    println("Target type: " + target.m_type);
-    println("================================");
+    if(g_debug){
+      println("================================");
+      println("Current type: " + current.m_type);
+      println("Target type: " + target.m_type);
+      println("================================");
+    }
 
     // First we will swap our candy's type so we can check matches
     // In the end we will unswap them if there are no matches

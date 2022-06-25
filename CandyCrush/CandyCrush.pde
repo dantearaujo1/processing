@@ -1,10 +1,12 @@
 // Setting Global Variables;
 Game CandyCrush;
+boolean g_debug;
 HashMap<String,Integer> COLORS = new HashMap<String,Integer>();
 
 // Setup Initial State
 void setup(){
   size(600,600);
+  g_debug = false;
   CandyCrush = new Game(0,this);
   COLORS.put("RED",color(200,0,0));
   COLORS.put("GREEN",color(0,200,0));
@@ -25,7 +27,13 @@ void keyPressed(){
   CandyCrush.getDirector().getScene().handleInput(int(key));
 }
 
+void changeDebug(){
+  g_debug = !g_debug;
+}
+
 
 PApplet getPApplet(){
   return this;
 }
+
+
