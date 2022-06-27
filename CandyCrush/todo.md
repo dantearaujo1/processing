@@ -3,9 +3,10 @@
 [X] - Make candy's fall down like they are suffering from gravity
 [X] - Make candy's animation at start
 [] - Make continuos matches
-[] - Add sound to movement
+[] - Add sound to movement -- NOT WORKING
 [X] - Add menu's for the game
 [X] - Transitions added
+[] - Add Resource Loader
 [] - Add UI for the game with timer, points and moves
   [] - Add Timer bar
   [] - Add Points when swapping and make bigger points with bigger matches
