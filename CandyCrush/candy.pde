@@ -33,9 +33,9 @@ class Candy{
 
   Candy(int x, int y, CandyCrush.CANDYTYPES type){
     m_x = x;
-    m_y = -2;
+    m_y = -100;
     m_startX = x;
-    m_startY = -2;
+    m_startY = (-100);
     m_endX = x;
     m_endY = y;
     m_type = type;
@@ -43,7 +43,7 @@ class Candy{
     m_initialAnim = true;
     m_swapAnim = false;
     m_deleteAnim = false;
-    m_initialAnimDuration = 2.0;
+    m_initialAnimDuration = 1.5;
     m_swapAnimDuration = 0.4;
     m_currentDuration = 0.0;
     m_deleteAnimDuration = 1.0;
@@ -81,6 +81,8 @@ class Candy{
   void initialAnimation(float dt){
     if(m_currentDuration >= m_initialAnimDuration){
       m_initialAnim = false;
+      m_startX = m_endX;
+      m_startY = m_endY;
       m_currentDuration = m_initialAnimDuration;
     }
     m_y = interpolation(m_startY,m_endY,m_currentDuration/m_initialAnimDuration);
