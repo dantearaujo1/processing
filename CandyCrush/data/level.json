@@ -1,6 +1,12 @@
 {
   "Levels":[
     {
+      "id":0,
+      "countdown":5,
+      "goal":10,
+      "maxMoves":99
+    },
+    {
       "id":1,
       "countdown":120,
       "goal":200,
