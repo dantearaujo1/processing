@@ -29,8 +29,14 @@ class Board{
         m_candys[y][x].update(dt);
       }
     }
+    if(m_candysToDelete.size() > 0){
+      m_shouldUpdateGravity = true;
+    }
     deleteCandys();
-    updateGravity();
+
+    if(m_shouldUpdateGravity){
+      updateGravity();
+    }
   }
 
   void updateGravity(){
@@ -52,9 +58,14 @@ class Board{
       // We should empty from our last position to Fill to the
       // First row
       for (int y = posToFill; y > -1; y--){
-          m_candys[y][x].m_type = CANDYTYPES.EMPTY;
+        m_candys[y][x].m_type = CANDYTYPES.EMPTY;
       }
     }
+
+    m_shouldUpdateGravity = false;
+      if(g_debug){
+        println("Updated Gravity");
+      }
 
   }
 
@@ -64,6 +75,7 @@ class Board{
     }
     return false;
   }
+
 
   void swap(SwapData playerSwap){
     if (hasMatch()){
@@ -86,6 +98,10 @@ class Board{
       second.m_currentDuration = 0.0;
       second.m_type = temp.m_type;
       second.m_swapAnim = true;
+
+      if(g_debug){
+        println("Swapped");
+      }
 
     }
   }
