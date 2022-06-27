@@ -16,10 +16,8 @@ class SceneManager{
       for(IScene s : m_scenes){
         if(s == scene){
           m_currentScene.onPause();
-          m_transition.init();
           m_nextScene = scene;
-          /* m_currentScene = scene; */
-          /* m_currentScene.onResume(); */
+          m_transition.init();
           return;
         }
       }
@@ -31,9 +29,11 @@ class SceneManager{
       for(IScene s : m_scenes){
         if(s == scene){
           m_currentScene.onPause();
+          if(transition != null){
+            m_transition = transition;
+          }
+          m_nextScene = scene;
           m_transition.init();
-          /* m_currentScene = scene; */
-          /* m_currentScene.onResume(); */
           return;
         }
       }
@@ -43,21 +43,29 @@ class SceneManager{
 
   void addScene(IScene scene){
     if(scene != null){
-      for(IScene s : m_scenes){
-        if(s == scene){
-          m_currentScene.onPause();
-          m_nextScene = scene;
-          m_transition.init();
-          m_currentScene = scene;
-          m_currentScene.onResume();
-          return;
+      if(m_scenes.size() > 0){
+        for(IScene s : m_scenes){
+          if(s == scene){
+            m_currentScene.onPause();
+            m_nextScene = scene;
+            m_transition.init();
+            m_nextScene.onResume();
+            return;
+          }
         }
+        m_scenes.add(scene);
+        m_currentScene.onPause();
+        m_nextScene = scene;
+        m_transition.init();
+        m_nextScene.onInit();
       }
-      m_scenes.add(scene);
-      m_transition.init();
-      m_currentScene = scene;
-      m_currentScene.onInit();
+      else{
+        m_scenes.add(scene);
+        m_currentScene = scene;
+        m_transition.init();
+        m_currentScene.onInit();
 
+      }
     }
   }
 
@@ -80,7 +88,6 @@ class SceneManager{
     if(m_nextScene != null){
       if(m_transition.shouldSwap()){
         m_currentScene = m_nextScene;
-        m_currentScene.onResume();
         m_nextScene = null;
       }
     }
@@ -102,11 +109,12 @@ class SceneManager{
   }
 
   void run(float dt){
-    this.update(dt);
-    this.draw();
 
-    this.lateUpdate(dt);
-    this.lateDraw();
+      this.update(dt);
+      this.draw();
+
+      this.lateUpdate(dt);
+      this.lateDraw();
     if(m_transition.isStarted()){
       m_transition.draw();
     }
