@@ -54,7 +54,7 @@ class MenuScene implements IScene{
   }
 
   void Start(){
-    Controller c = m_controlGUI.getController("Start");
+    controlP5.Controller c = m_controlGUI.getController("Start");
     c.hide();
     m_director.addScene(new GameScene(m_director,getPApplet()));
   }
@@ -77,7 +77,7 @@ class MenuScene implements IScene{
     }
     if(m_titleAnimation){
       m_titlePosition.y = - 100 + (height/2 + 100) * m_titleAnimationCurrentDuration/m_titleAnimationDuration;
-      Controller c = m_controlGUI.getController("Start");
+      controlP5.Controller c = m_controlGUI.getController("Start");
       c.setPosition(width/2 - c.getWidth()/2,m_titlePosition.y + 100);
     }
 
