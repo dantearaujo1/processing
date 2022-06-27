@@ -1,0 +1,17 @@
+{
+  "Levels":[
+    {
+      "id":1,
+      "countdown":120,
+      "goal":200,
+      "maxMoves":10
+    },
+    {
+      "id":2,
+      "countdown":100,
+      "goal":300,
+      "maxMoves":9
+    }
+  ]
+}
+

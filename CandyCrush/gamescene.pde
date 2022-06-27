@@ -1,6 +1,7 @@
 class GameScene implements IScene{
   Board m_board;
   Player m_player;
+  Level m_level;
   SceneManager m_director;
   ControlP5 m_controlGUI;
 
@@ -23,6 +24,7 @@ class GameScene implements IScene{
   void onInit(){
     textSize(8);
     m_timerCounter = 0.0;
+    loadLevel("level.json",0);
     m_board = new Board();
     m_player = new Player();
     m_player.setBoard(m_board);
@@ -53,10 +55,17 @@ class GameScene implements IScene{
 
   }
 
+  void loadLevel(String filename, int l){
+    JSONObject obj = loadJSONObject(filename);
+    JSONArray levels = obj.getJSONArray("Levels");
+    JSONObject level = levels.getJSONObject(l);
+    m_level = new Level(level.getInt("countdown"),level.getInt("goal"),level.getInt("maxMoves"));
+  }
+
   void draw(){
     m_board.draw();
     m_player.draw();
-    text(int(m_timerCounter), m_board.m_x + RECT_SIZE * BOARD_COLUMNS/2, m_board.m_y - 10);
+    text(int(m_level.m_countDown - m_timerCounter), m_board.m_x + RECT_SIZE * BOARD_COLUMNS/2, m_board.m_y - 10);
   }
 
   void lateDraw(){
