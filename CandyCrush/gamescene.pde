@@ -1,11 +1,11 @@
 class GameScene implements IScene{
-  Board m_board;
-  Player m_player;
-  Level m_level;
-  SceneManager m_director;
-  ControlP5 m_controlGUI;
+  Board         m_board;
+  Player        m_player;
+  Level         m_level;
+  SceneManager  m_director;
+  ControlP5     m_controlGUI;
+  boolean       m_playing;
 
-  float m_timerCounter;
 
   GameScene(SceneManager director, PApplet app){
     if (director != null){
@@ -15,19 +15,19 @@ class GameScene implements IScene{
       m_controlGUI = new ControlP5(app);
     }
 
-    m_board = new Board();
-    m_player = new Player();
-    m_player.setBoard(m_board);
-
   }
 
   void onInit(){
+    m_playing = false;
     textSize(8);
-    m_timerCounter = 0.0;
-    loadLevel("level.json",0);
     m_board = new Board();
     m_player = new Player();
     m_player.setBoard(m_board);
+    loadLevel("level.json",0);
+    if(m_level != null){
+      m_level.setPlayer(m_player);
+      m_level.setBoard(m_board);
+    }
   }
   void onExit(){
 
@@ -37,19 +37,31 @@ class GameScene implements IScene{
   }
 
   void onPause(){
-
+    m_playing = false;
   }
   void handleInput(int k){
-    m_player.handleInput(k);
+    if(m_level.hasEnded()){
+      if(k == '\n'){
+        onInit();
+      }
+      if(k == ESC){
+        m_director.changeScene(m_director.m_scenes.get(0));
+        key = 0;
+      }
+    }
+    else{
+      m_player.handleInput(k);
+    }
   }
 
   void run(float dt){
   }
 
   void update(float dt){
-    m_player.update(dt);
-    m_board.update(dt);
-    m_timerCounter += dt;
+    if(!m_playing){
+      m_level.update(dt);
+    }
+
   }
   void lateUpdate(float dt){
 
@@ -63,13 +75,15 @@ class GameScene implements IScene{
   }
 
   void draw(){
-    m_board.draw();
-    m_player.draw();
-    text(int(m_level.m_countDown - m_timerCounter), m_board.m_x + RECT_SIZE * BOARD_COLUMNS/2, m_board.m_y - 10);
+    m_level.draw();
   }
 
   void lateDraw(){
-    m_board.lateDraw();
+    m_level.lateDraw();
+    /* if(!m_playing){ */
+    /*   fill(0,0,0,100); */
+    /*   rect(0,0,width,height); */
+    /* } */
   }
 
 }
