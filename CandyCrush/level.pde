@@ -26,7 +26,11 @@ class Level{
   void draw(){
     m_board.draw();
     m_player.draw();
+    pushStyle();
+    textSize(16);
     text(int(m_countDown), m_board.m_x + RECT_SIZE * BOARD_COLUMNS/2, m_board.m_y - 10);
+    text(int(m_player.m_points), m_board.m_x + 5 , m_board.m_y - 10);
+    popStyle();
   }
 
   boolean hasEnded(){

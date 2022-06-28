@@ -4,16 +4,16 @@ boolean g_debug;
 HashMap<String,Integer> COLORS = new HashMap<String,Integer>();
 
 PFont g_debugFont;
-
+PFont g_gameFont;
 
 // Setup Initial State
 void setup(){
   size(600,600);
   g_debug = false;
-  CandyCrush = new Game(0,this);
-
 
   g_debugFont = createFont("Serif",9);
+  g_gameFont = createFont("./Atari-Classic/AtariClassic-Regular.ttf",56);
+
   COLORS.put("RED",color(200,0,0));
   COLORS.put("GREEN",color(0,200,0));
   COLORS.put("YELLOW",color(200,200,0));
@@ -21,6 +21,8 @@ void setup(){
   COLORS.put("BLACK",color(0,0,0));
   COLORS.put("CYAN",color(0,200,200));
   COLORS.put("EMPTY",color(255,255,255));
+
+  CandyCrush = new Game(0,this);
 }
 
 // GameLoop
@@ -40,6 +42,8 @@ void changeDebug(){
     textAlign(CORNER,CORNER);
   }
   else{
+    textFont(g_gameFont);
+    textAlign(CENTER,CENTER);
   }
 }
 

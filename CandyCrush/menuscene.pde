@@ -29,14 +29,18 @@ class MenuScene implements IScene{
     m_titleAnimationCurrentDuration = 0.0;
     m_controlGUI.addButton("Start").plugTo(this).setColorBackground(color(0,0,0,150)).setColorForeground(color(122,122,0)).setColorActive(color(255,0,0,100));
     loadImages();
-    loadFonts();
+    textFont(g_gameFont);
+    textAlign(CENTER,CENTER);
   }
 
   void onExit(){
     m_controlGUI.getController("Start").hide();
   }
   void onResume(){
-
+    m_controlGUI.getController("Start").show();
+    textFont(g_gameFont);
+    textSize(56);
+    textAlign(CENTER,CENTER);
   }
 
   void onPause(){
@@ -47,11 +51,6 @@ class MenuScene implements IScene{
     m_background = loadImage("game_background.png");
   }
 
-  void loadFonts(){
-    m_menuFont = createFont("./Atari-Classic/AtariClassic-Regular.ttf",56);
-    textFont(m_menuFont);
-    textAlign(CENTER,CENTER);
-  }
 
   void Start(){
     controlP5.Controller c = m_controlGUI.getController("Start");
