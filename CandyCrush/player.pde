@@ -43,10 +43,10 @@ class Player{
     drawSelection(color(200,200,0));
     drawPosition(p.x,p.y,color(0,220,50));
     fill(255,0,0);
-    if(g_debug){
-      text("Selection one: " + p1.x + "," + p1.y,0, height - 90);
-      text("Selection two: " + p2.x + "," + p2.y,0, height - 75);
-    }
+    /* if(g_debug){ */
+    /*   text("Selection one: " + p1.x + "," + p1.y,0, height - 90); */
+    /*   text("Selection two: " + p2.x + "," + p2.y,0, height - 75); */
+    /* } */
   }
   void drawSelection(color selectionColor){
     if(m_board != null){
@@ -75,10 +75,16 @@ class Player{
         text(c.m_type.name(),0,height-100);
         text("X: " + int(c.m_x),35,height-100);
         text("Y: " + int(c.m_y),90,height-100);
+        text("CurD: " + nfs(c.m_currentDuration,2,2),0,height-80);
+        text("GravD: " + nfs(c.m_gravityCurrentDuration,1,2),65,height-80);
         text("StartX: " + c.m_startX,130,height-100);
         text("StartY: " + c.m_startY,190,height-100);
         text("EndX: " + c.m_endX,130,height-80);
         text("EndY: " + c.m_endY,190,height-80);
+        text("InitialAnim: " + c.m_initialAnim,250,height-80);
+        text("SwapAnim: " + c.m_swapAnim,360,height-80);
+        text("GravityAnim: " + c.m_gravityAnim,250,height-100);
+        text("DeleteAnim: " + c.m_deleteAnim,360,height-100);
       }
       popStyle();
     }
