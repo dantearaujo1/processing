@@ -18,6 +18,7 @@ class SceneManager{
           m_currentScene.onPause();
           m_nextScene = scene;
           m_transition.init();
+          m_nextScene.onResume();
           return;
         }
       }
@@ -34,6 +35,7 @@ class SceneManager{
           }
           m_nextScene = scene;
           m_transition.init();
+          m_nextScene.onResume();
           return;
         }
       }
