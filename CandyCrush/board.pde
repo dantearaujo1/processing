@@ -51,6 +51,12 @@ class Board{
       for (int y = BOARD_ROWS - 1; y > -1; y--){
         if(m_candys[y][x].m_type != CANDYTYPES.EMPTY || m_candys[y][x].m_swapAnim){
           m_candys[posToFill][x].m_type = m_candys[y][x].m_type;
+          m_candys[posToFill][x].m_endY = m_candys[y][x].m_y;
+          m_candys[posToFill][x].m_endX = m_candys[y][x].m_x;
+          m_candys[posToFill][x].m_gravityAnim = true;
+          m_candys[posToFill][x].m_gravityCurrentDuration = 0.0;
+
+
           posToFill -= 1;
         }
       }
@@ -109,8 +115,9 @@ class Board{
   void deleteCandys(){
     ArrayList<Candy> toDelete = new ArrayList<Candy>();
     for (Candy c : m_candysToDelete){
-      if(c.m_type == CANDYTYPES.EMPTY){
+      if(c.m_type == CANDYTYPES.EMPTY && c.m_currentDuration >= c.m_deleteAnimDuration){
         toDelete.add(c);
+        c.m_currentDuration = 0;
       }
     }
     for(Candy c : toDelete){

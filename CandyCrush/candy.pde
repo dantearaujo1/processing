@@ -23,11 +23,14 @@ class Candy{
   float m_initialAnimDuration;
   float m_swapAnimDuration;
   float m_deleteAnimDuration;
+  float m_gravityAnimDuration;
   float m_currentDuration;
+  float m_gravityCurrentDuration;
 
   boolean m_initialAnim;
   boolean m_swapAnim;
   boolean m_deleteAnim;
+  boolean m_gravityAnim;
 
 
 
@@ -35,7 +38,7 @@ class Candy{
     m_x = x;
     m_y = -100;
     m_startX = x;
-    m_startY = (-100);
+    m_startY = m_y;
     m_endX = x;
     m_endY = y;
     m_type = type;
@@ -43,10 +46,13 @@ class Candy{
     m_initialAnim = true;
     m_swapAnim = false;
     m_deleteAnim = false;
+    m_gravityAnim = false;
     m_initialAnimDuration = 1.5;
+    m_gravityAnimDuration = 0.4;
+    m_gravityCurrentDuration = 0.0;
     m_swapAnimDuration = 0.4;
     m_currentDuration = 0.0;
-    m_deleteAnimDuration = 1.0;
+    m_deleteAnimDuration = 0.4;
   }
 
   void update(float dt){
@@ -59,7 +65,12 @@ class Candy{
     if(m_deleteAnim){
       deleteAnimation(dt);
     }
-    m_currentDuration += dt;
+    if(m_gravityAnim){
+      gravityAnimation(dt);
+    }
+    if(isAnimating()){
+      m_currentDuration += dt;
+    }
   }
 
   void draw(float offsetX, float offsetY){
@@ -101,6 +112,19 @@ class Candy{
     }
     m_y = interpolation(m_startY,m_endY,flip(easeOut(m_currentDuration/m_swapAnimDuration)));
     m_x = interpolation(m_startX,m_endX,flip(easeOut(m_currentDuration/m_swapAnimDuration)));
+  }
+  void gravityAnimation(float dt){
+    m_gravityCurrentDuration += dt;
+    if(m_gravityCurrentDuration >= m_gravityAnimDuration){
+      m_gravityAnim = false;
+      m_gravityCurrentDuration = m_gravityAnimDuration;
+    }
+    m_y = interpolation(m_startY,m_endY,flip(easeOut(m_gravityCurrentDuration/m_gravityAnimDuration)));
+    m_x = interpolation(m_startX,m_endX,flip(easeOut(m_gravityCurrentDuration/m_gravityAnimDuration)));
+  }
+
+  boolean isAnimating(){
+    return (m_swapAnim || m_deleteAnim || m_initialAnim);
   }
 
   Candy copy(){
