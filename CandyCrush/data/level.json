@@ -9,10 +9,10 @@
     },
     {
       "id":1,
-      "countdown":120,
+      "countdown":10,
       "goal":200,
       "maxMoves":10,
-      "background":"GROUND"
+      "background":"LAVA"
     },
     {
       "id":2,
@@ -20,6 +20,13 @@
       "goal":300,
       "maxMoves":9,
       "background":"ICE"
+    },
+    {
+      "id":3,
+      "countdown":80,
+      "goal":350,
+      "maxMoves":6,
+      "background":"GROUND"
     }
   ]
 }
