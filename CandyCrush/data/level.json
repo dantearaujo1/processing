@@ -2,21 +2,24 @@
   "Levels":[
     {
       "id":0,
-      "countdown":5,
+      "countdown":100,
       "goal":10,
-      "maxMoves":99
+      "maxMoves":99,
+      "background":"GROUND"
     },
     {
       "id":1,
       "countdown":120,
       "goal":200,
-      "maxMoves":10
+      "maxMoves":10,
+      "background":"GROUND"
     },
     {
       "id":2,
       "countdown":100,
       "goal":300,
-      "maxMoves":9
+      "maxMoves":9,
+      "background":"ICE"
     }
   ]
 }
