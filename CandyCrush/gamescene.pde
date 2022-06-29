@@ -19,11 +19,11 @@ class GameScene implements IScene{
 
   void onInit(){
     m_playing = false;
-    textSize(8);
+    textSize(8 * g_scaleFactorX);
     m_board = new Board();
     m_player = new Player();
     m_player.setBoard(m_board);
-    loadLevel("level.json",2);
+    loadLevel("level.json",1);
     if(m_level != null){
       m_level.setPlayer(m_player);
     }
@@ -32,7 +32,7 @@ class GameScene implements IScene{
 
   }
   void onResume(){
-    textSize(8);
+    textSize(8 * g_scaleFactorX);
   }
 
   void onPause(){

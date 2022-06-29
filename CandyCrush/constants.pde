@@ -1,5 +1,5 @@
-final int BOARD_ROWS = 12;
+final int BOARD_ROWS = 8;
 final int BOARD_COLUMNS = 10;
-final int CANDY_SIZE = 32;
-final int RECT_SIZE = 36;
+final float CANDY_SIZE = 32;
+final float RECT_SIZE = 32;
 

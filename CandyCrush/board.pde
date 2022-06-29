@@ -7,6 +7,7 @@ class Board{
   ArrayList<Candy> m_candysToDelete;
   boolean m_shouldUpdateGravity;
 
+
   Board(){
     init();
   }
@@ -20,8 +21,8 @@ class Board{
         m_candys[y][x] = new Candy(x,y,type);
       }
     }
-    m_x = width/2 - BOARD_COLUMNS * RECT_SIZE/2 ;
-    m_y = height * 0.05;
+    m_x = width/2 - BOARD_COLUMNS * RECT_SIZE * g_scaleFactorX/2 ;
+    m_y = height/2 - BOARD_ROWS * RECT_SIZE * g_scaleFactorY/2;
     m_backgroundTile = new Frame(0,0,32,32);
   }
 
@@ -96,6 +97,7 @@ class Board{
       first.m_endX = second.m_x;
       first.m_endY = second.m_y;
       first.m_startY = first.m_y;
+      /* first.m_startX = first.m_x; */
       first.m_type = second.m_type;
       first.m_swapAnim = true;
       first.m_currentDuration = 0.0;
@@ -103,8 +105,9 @@ class Board{
       second.m_endX = temp.m_x;
       second.m_endY = temp.m_y;
       second.m_startY = second.m_y;
-      second.m_currentDuration = 0.0;
+      /* second.m_startX = second.m_x; */
       second.m_type = temp.m_type;
+      second.m_currentDuration = 0.0;
       second.m_swapAnim = true;
 
       if(g_debug){
@@ -148,9 +151,9 @@ class Board{
     for (int y = 0; y < BOARD_ROWS; y++){
       for (int x = 0; x < BOARD_COLUMNS; x++){
         fill(122,122,122);
-        rect(m_x + x*RECT_SIZE, m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
+        rect(m_x + x*RECT_SIZE*g_scaleFactorX, m_y + y*RECT_SIZE*g_scaleFactorY,RECT_SIZE*g_scaleFactorX,RECT_SIZE*g_scaleFactorY);
         Frame f = m_backgroundTile;
-        image(g_backgroundTile, m_x + x*RECT_SIZE, m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE,f.x,f.y,f.x + f.width, f.y + f.height);
+        image(g_backgroundTile, m_x + x*RECT_SIZE*g_scaleFactorX, m_y + y*RECT_SIZE*g_scaleFactorY,RECT_SIZE*g_scaleFactorX,RECT_SIZE*g_scaleFactorY,f.x,f.y,f.x + f.width, f.y + f.height);
       }
     }
   }

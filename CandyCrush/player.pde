@@ -55,10 +55,10 @@ class Player{
       pushStyle();
       fill(selectionColor);
       if(pos1.x >= 0 && pos1.y >= 0){
-        rect(m_board.m_x + pos1.x * RECT_SIZE, m_board.m_y + pos1.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+        rect(m_board.m_x + pos1.x * RECT_SIZE*g_scaleFactorX, m_board.m_y + pos1.y * RECT_SIZE*g_scaleFactorY, RECT_SIZE*g_scaleFactorX, RECT_SIZE*g_scaleFactorY);
       }
       if(pos2.x >=0 && pos2.y >= 0){
-        rect(m_board.m_x + pos2.x * RECT_SIZE, m_board.m_y + pos2.y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
+        rect(m_board.m_x + pos2.x * RECT_SIZE*g_scaleFactorX, m_board.m_y + pos2.y * RECT_SIZE*g_scaleFactorY, RECT_SIZE*g_scaleFactorX, RECT_SIZE*g_scaleFactorY);
       }
 
       popStyle();
@@ -68,7 +68,7 @@ class Player{
     if(m_board != null){
       pushStyle();
       fill(positionColor);
-      rect(m_board.m_x + x*RECT_SIZE,m_board.m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
+      rect(m_board.m_x + x*RECT_SIZE*g_scaleFactorX,m_board.m_y + y*RECT_SIZE*g_scaleFactorY,RECT_SIZE*g_scaleFactorX,RECT_SIZE*g_scaleFactorY);
       stroke(255,0,0);
       if(g_debug){
         Candy c = getCandy(m_position,m_board.m_candys);

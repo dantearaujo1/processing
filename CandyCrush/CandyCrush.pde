@@ -1,20 +1,27 @@
 // Setting Global Variables;
-Game CandyCrush;
+Game    CandyCrush;
 boolean g_debug;
-HashMap<String,Integer> COLORS = new HashMap<String,Integer>();
-HashMap<String,Frame> CANDYS = new HashMap<String,Frame>();
-HashMap<String,Frame> BACKTILES = new HashMap<String,Frame>();
-
-PFont g_debugFont;
-PFont g_gameFont;
-PImage g_image;
-PImage g_backgroundTile;
-
+float   g_scaleFactorX;
+float   g_scaleFactorY;
+PFont   g_debugFont;
+PFont   g_gameFont;
+PImage  g_image;
+PImage  g_backgroundTile;
 Frame[] g_frames;
 
+HashMap<String,Frame> BACKTILES = new HashMap<String,Frame>();
+HashMap<String,Frame> CANDYS = new HashMap<String,Frame>();
+
+
+void settings(){
+  /* fullScreen(P2D); */
+  size(600,600);
+  noSmooth();
+}
 // Setup Initial State
 void setup(){
-  size(600,600);
+  g_scaleFactorX = width/600.0;
+  g_scaleFactorY = width/600.0;
   g_debug = false;
 
   g_debugFont = createFont("Serif",9);
@@ -42,13 +49,6 @@ void setup(){
   BACKTILES.put("ACID",g_frames[2]);
   BACKTILES.put("GROUND",g_frames[0]);
 
-  /* COLORS.put("RED",color(200,0,0)); */
-  /* COLORS.put("GREEN",color(0,200,0)); */
-  /* COLORS.put("YELLOW",color(200,200,0)); */
-  /* COLORS.put("BLUE",color(0,0,200)); */
-  /* COLORS.put("BLACK",color(0,0,0)); */
-  /* COLORS.put("CYAN",color(0,200,200)); */
-  /* COLORS.put("EMPTY",color(255,255,255)); */
 
   CandyCrush = new Game(0,this);
 }

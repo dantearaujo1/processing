@@ -27,9 +27,9 @@ class MenuScene implements IScene{
     m_titleAnimation = true;
     m_titleAnimationDuration = 2.0;
     m_titleAnimationCurrentDuration = 0.0;
-    m_controlGUI.addButton("Start").plugTo(this).setColorBackground(color(0,0,0,150)).setColorForeground(color(122,122,0)).setColorActive(color(255,0,0,100));
+    m_controlGUI.addButton("Start").setSize(int(200*g_scaleFactorX),int(50*g_scaleFactorY)).plugTo(this).setColorBackground(color(0,0,0,150)).setColorForeground(color(122,122,0)).setColorActive(color(255,0,0,100)).getCaptionLabel().setFont(new ControlFont(g_gameFont,int(20*g_scaleFactorX)));
     loadImages();
-    textFont(g_gameFont);
+    textFont(g_gameFont,56 * g_scaleFactorX);
     textAlign(CENTER,CENTER);
   }
 
@@ -39,7 +39,7 @@ class MenuScene implements IScene{
   void onResume(){
     m_controlGUI.getController("Start").show();
     textFont(g_gameFont);
-    textSize(56);
+    textSize(56 * g_scaleFactorX);
     textAlign(CENTER,CENTER);
   }
 
@@ -49,6 +49,7 @@ class MenuScene implements IScene{
 
   void loadImages(){
     m_background = loadImage("game_background.png");
+    m_background.resize(width,height);
   }
 
 
@@ -77,7 +78,7 @@ class MenuScene implements IScene{
     if(m_titleAnimation){
       m_titlePosition.y = - 100 + (height/2 + 100) * m_titleAnimationCurrentDuration/m_titleAnimationDuration;
       controlP5.Controller c = m_controlGUI.getController("Start");
-      c.setPosition(width/2 - c.getWidth()/2,m_titlePosition.y + 100);
+      c.setPosition(width/2 - c.getWidth()/2,m_titlePosition.y + 100 * g_scaleFactorY);
     }
 
     if(m_backgroundPosition.x <= -m_background.width){

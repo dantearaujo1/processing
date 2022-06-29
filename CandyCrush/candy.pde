@@ -64,10 +64,10 @@ class Candy{
     if(m_swapAnim){
       swapAnimation(dt);
     }
-    if(m_deleteAnim){
+    else if(m_deleteAnim){
       deleteAnimation(dt);
     }
-    if(m_gravityAnim){
+    else if(m_gravityAnim){
       gravityAnimation(dt);
     }
     if(isAnimating()){
@@ -83,7 +83,7 @@ class Candy{
       }
       Frame f = CANDYS.get(m_type.name());
       if(f != null){
-        image(g_image,offsetX + m_x * RECT_SIZE, offsetY + m_y * RECT_SIZE,CANDY_SIZE,CANDY_SIZE,f.x,f.y,f.x + f.width, f.y + f.height);
+        image(g_image,offsetX + m_x * RECT_SIZE*g_scaleFactorX, offsetY + m_y * RECT_SIZE*g_scaleFactorY,CANDY_SIZE*g_scaleFactorX,CANDY_SIZE*g_scaleFactorY,f.x,f.y,f.x + f.width, f.y + f.height);
         noTint();
       }
     }
