@@ -23,10 +23,9 @@ class GameScene implements IScene{
     m_board = new Board();
     m_player = new Player();
     m_player.setBoard(m_board);
-    loadLevel("level.json",0);
+    loadLevel("level.json",2);
     if(m_level != null){
       m_level.setPlayer(m_player);
-      m_level.setBoard(m_board);
     }
   }
   void onExit(){
@@ -72,6 +71,8 @@ class GameScene implements IScene{
     JSONArray levels = obj.getJSONArray("Levels");
     JSONObject level = levels.getJSONObject(l);
     m_level = new Level(level.getInt("countdown"),level.getInt("goal"),level.getInt("maxMoves"));
+    m_level.setBoard(m_board);
+    m_level.setBoardBackground(BACKTILES.get(level.getString("background")));
   }
 
   void draw(){

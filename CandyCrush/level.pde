@@ -56,5 +56,11 @@ class Level{
     m_board = b;
   }
 
+  void setBoardBackground(Frame f){
+    if(f != null){
+      m_board.m_backgroundTile = f;
+    }
+  }
+
 
 }
