@@ -3,6 +3,7 @@ class Board{
   Candy[][] m_candys;
   float m_x;
   float m_y;
+  Frame m_backgroundTile;
   ArrayList<Candy> m_candysToDelete;
   boolean m_shouldUpdateGravity;
 
@@ -21,6 +22,7 @@ class Board{
     }
     m_x = width/2 - BOARD_COLUMNS * RECT_SIZE/2 ;
     m_y = height * 0.05;
+    m_backgroundTile = new Frame(0,0,32,32);
   }
 
   void update(float dt){
@@ -147,6 +149,8 @@ class Board{
       for (int x = 0; x < BOARD_COLUMNS; x++){
         fill(122,122,122);
         rect(m_x + x*RECT_SIZE, m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE);
+        Frame f = m_backgroundTile;
+        image(g_backgroundTile, m_x + x*RECT_SIZE, m_y + y*RECT_SIZE,RECT_SIZE,RECT_SIZE,f.x,f.y,f.x + f.width, f.y + f.height);
       }
     }
   }

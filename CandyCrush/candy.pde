@@ -3,9 +3,11 @@ enum CANDYTYPES{
   YELLOW,
   GREEN,
   BLUE,
-  BLACK,
-  CYAN,
+  MAGENTA,
+  ORANGE,
   EMPTY,
+  /* BLACK, */
+  /* CYAN, */
 };
 
 class Candy{
@@ -77,14 +79,20 @@ class Candy{
     if(m_type != CANDYTYPES.EMPTY){
       if(m_deleteAnim){
         float a = interpolation(255,0,m_currentDuration/m_deleteAnimDuration);
-        color c = COLORS.get(m_type.name());
-        fill(COLORS.get(m_type.name()),a);
-        noStroke();
+        tint(255,a);
+        /* color c = COLORS.get(m_type.name()); */
+        /* fill(COLORS.get(m_type.name()),a); */
+        /* noStroke(); */
       }
       else{
-        fill(COLORS.get(m_type.name()));
+        /* fill(COLORS.get(m_type.name())); */
       }
-      circle((offsetX + m_x * RECT_SIZE + RECT_SIZE/2),(offsetY + m_y * RECT_SIZE + RECT_SIZE/2),CANDY_SIZE);
+      /* circle((offsetX + m_x * RECT_SIZE + RECT_SIZE/2),(offsetY + m_y * RECT_SIZE + RECT_SIZE/2),CANDY_SIZE); */
+      Frame f = CANDYS.get(m_type.name());
+      if(f != null){
+        image(g_image,offsetX + m_x * RECT_SIZE, offsetY + m_y * RECT_SIZE,CANDY_SIZE,CANDY_SIZE,f.x,f.y,f.x + f.width, f.y + f.height);
+        noTint();
+      }
       stroke(0);
     }
   }
