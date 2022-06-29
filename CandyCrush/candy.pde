@@ -80,20 +80,12 @@ class Candy{
       if(m_deleteAnim){
         float a = interpolation(255,0,m_currentDuration/m_deleteAnimDuration);
         tint(255,a);
-        /* color c = COLORS.get(m_type.name()); */
-        /* fill(COLORS.get(m_type.name()),a); */
-        /* noStroke(); */
       }
-      else{
-        /* fill(COLORS.get(m_type.name())); */
-      }
-      /* circle((offsetX + m_x * RECT_SIZE + RECT_SIZE/2),(offsetY + m_y * RECT_SIZE + RECT_SIZE/2),CANDY_SIZE); */
       Frame f = CANDYS.get(m_type.name());
       if(f != null){
         image(g_image,offsetX + m_x * RECT_SIZE, offsetY + m_y * RECT_SIZE,CANDY_SIZE,CANDY_SIZE,f.x,f.y,f.x + f.width, f.y + f.height);
         noTint();
       }
-      stroke(0);
     }
   }
 
@@ -122,13 +114,13 @@ class Candy{
     m_x = interpolation(m_startX,m_endX,flip(easeOut(m_currentDuration/m_swapAnimDuration)));
   }
   void gravityAnimation(float dt){
-    m_gravityCurrentDuration += dt;
     if(m_gravityCurrentDuration >= m_gravityAnimDuration){
       m_gravityAnim = false;
       m_gravityCurrentDuration = m_gravityAnimDuration;
     }
     m_y = interpolation(m_startY,m_endY,flip(easeOut(m_gravityCurrentDuration/m_gravityAnimDuration)));
     m_x = interpolation(m_startX,m_endX,flip(easeOut(m_gravityCurrentDuration/m_gravityAnimDuration)));
+    m_gravityCurrentDuration += dt;
   }
 
   boolean isAnimating(){
