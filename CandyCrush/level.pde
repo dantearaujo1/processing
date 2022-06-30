@@ -25,6 +25,7 @@ class Level{
     m_countDown = m_time;
     m_player.m_points = m_player.m_initPoints;
     m_board.reuseBoard();
+    m_player.m_moves = 0;
   }
 
   void update(float dt){
@@ -51,11 +52,18 @@ class Level{
     textSize(16 * g_scaleFactorX);
     text(int(m_countDown), m_board.m_x + RECT_SIZE  * g_scaleFactorX * BOARD_COLUMNS/2, m_board.m_y - 10 * g_scaleFactorY);
     text(int(m_player.m_points) + "/" + m_goalPoints, m_board.m_x + textWidth(str(m_player.m_points) + "/" + str(m_goalPoints))/2 , m_board.m_y - 10 * g_scaleFactorY);
+
+    for(int i = 0; i < (m_maxMoves-m_player.m_moves); i++){
+
+      image(g_backgroundTile,m_board.m_x + 0.75 * BOARD_COLUMNS * RECT_SIZE * g_scaleFactorX + (i % int(m_maxMoves/2)) * 12  , m_board.m_y - 10 * g_scaleFactorY * int(i/ int(m_maxMoves/2) + 1),12*g_scaleFactorX,12*g_scaleFactorY, int(4*32.0),int(0.0),int(5*32.0),int(32.0));
+
+    }
+    text(int(m_player.m_points) + "/" + m_goalPoints, m_board.m_x + textWidth(str(m_player.m_points) + "/" + str(m_goalPoints))/2 , m_board.m_y - 10 * g_scaleFactorY);
     popStyle();
   }
 
   boolean hasEnded(){
-    return (m_countDown <= 1);
+    return (m_countDown <= 1 || (m_maxMoves == m_player.m_moves));
   }
 
   void lateDraw(){
