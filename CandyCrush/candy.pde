@@ -116,8 +116,8 @@ class Candy{
       m_swapAnim = false;
       m_swapCurrentDuration = m_swapAnimDuration;
     }
-    m_y = interpolation(m_startY,m_endY,(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
-    m_x = interpolation(m_startX,m_endX,(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
+    m_y = interpolation(m_startY,m_endY,flip(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
+    m_x = interpolation(m_startX,m_endX,flip(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
     m_swapCurrentDuration += dt;
   }
 
