@@ -43,10 +43,6 @@ class Player{
     drawSelection(color(200,200,0));
     drawPosition(p.x,p.y,color(0,220,50));
     fill(255,0,0);
-    /* if(g_debug){ */
-    /*   text("Selection one: " + p1.x + "," + p1.y,0, height - 90); */
-    /*   text("Selection two: " + p2.x + "," + p2.y,0, height - 75); */
-    /* } */
   }
   void drawSelection(color selectionColor){
     if(m_board != null){
@@ -161,6 +157,10 @@ class Player{
       if(swappedMatches.size() > 0 || targetMatches.size()>0){
         m_board.setCandysToDelete(swappedMatches);
         m_board.setCandysToDelete(targetMatches);
+        // Here we are increasing points in our strange formula
+        m_points += swappedMatches.size() * swappedMatches.size();
+        m_points += targetMatches.size() * targetMatches.size();
+        m_points += swappedMatches.size() * targetMatches.size()/3;
 
         m_startSwap = true;
         return m_startSwap;
