@@ -8,16 +8,15 @@
 [X] - Transitions added
 [] - Add Resource Loader
 [X] - Add UI for the game with timer, points and moves
-  [] - Add Timer bar DON'T NEED THAT
-  [-] - Add Points when swapping and make bigger points with bigger matches
-    [] - Points Added
-    [] - Increase Points after swap
-    [] - Bigger Points with bigger swaps
+  [X] - Add Points when swapping and make bigger points with bigger matches
+    [X] - Points Added
+    [X] - Increase Points after swap
+    [X] - Bigger Points with bigger swaps
   [-] - Add an movement limit and an score to reach for winning the level
-    [-] - Score to reach.
-      [] - Score to reach logic
-    [-] - Movement limit.
-      [] - Movemente limit logic
+    [X] - Score to reach.
+      [X] - Score to reach logic
+    [] - Movement limit.
+      [] - Movement limit logic
 
 
 // BUG:
@@ -26,4 +25,5 @@
 [X] - Some Swapping data are being passed wrongly
 [] - Swapping with and empty candy that make a match, delete the match but the swapped candy appears at the last empty positionat the last empty position when updatingGravity
 [] - Not getting all candys in a match, its like we are only looking one time for each perpendicular direction from the match
+[] - Glitch when updatingGravity
 [X] - Transitions not pausing game state
