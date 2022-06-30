@@ -1,20 +1,30 @@
 class Level{
+  int     m_id;
   Player  m_player;
   Board   m_board;
   float   m_countDown;
+  float   m_time;
   int     m_goalPoints;
   int     m_maxMoves;
   Tween   m_tween;
   String  m_endText;
   String  m_endInfoText;
 
-  Level(float time, int points, int moves){
+  Level(int id, float time, int points, int moves){
+    m_id = id;
     m_countDown = time;
+    m_time = time;
     m_goalPoints = points;
     m_maxMoves = moves;
     m_tween = new Tween(2,0,height/2);
     m_endText = "You lose!";
     m_endInfoText = "Press ESC to go back or press Enter play again";
+  }
+
+  void reset(){
+    m_countDown = m_time;
+    m_player.m_points = m_player.m_initPoints;
+    m_board.generateCandys();
   }
 
   void update(float dt){

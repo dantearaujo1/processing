@@ -18,15 +18,12 @@ class GameScene implements IScene{
   }
 
   void onInit(){
-    m_playing = false;
-    textSize(8 * g_scaleFactorX);
+    m_playing = true;
     m_board = new Board();
     m_player = new Player();
     m_player.setBoard(m_board);
     loadLevel("level.json",1);
-    if(m_level != null){
-      m_level.setPlayer(m_player);
-    }
+    textSize(8 * g_scaleFactorX);
   }
   void onExit(){
 
@@ -40,8 +37,14 @@ class GameScene implements IScene{
   }
   void handleInput(int k){
     if(m_level.hasEnded()){
-      if(k == '\n'){
-        onInit();
+      if(m_level.didGoalReach()){
+        if(k == '\n'){
+          loadLevel("level.json",m_level.m_id+1);
+          m_player.m_initPoints = m_player.m_points;
+        }
+      }
+      else if(k == '\n'){
+        resetLevel();
       }
       if(k == ESC){
         m_director.changeScene(m_director.m_scenes.get(0));
@@ -57,7 +60,7 @@ class GameScene implements IScene{
   }
 
   void update(float dt){
-    if(!m_playing){
+    if(m_playing){
       m_level.update(dt);
     }
 
@@ -69,10 +72,20 @@ class GameScene implements IScene{
   void loadLevel(String filename, int l){
     JSONObject obj = loadJSONObject(filename);
     JSONArray levels = obj.getJSONArray("Levels");
-    JSONObject level = levels.getJSONObject(l);
-    m_level = new Level(level.getInt("countdown"),level.getInt("goal"),level.getInt("maxMoves"));
-    m_level.setBoard(m_board);
+    JSONObject level = levels.getJSONObject(l-1);
+    m_level = new Level(l,level.getInt("countdown"),level.getInt("goal"),level.getInt("maxMoves"));
+    onLevelInit(level);
+  }
+
+  void onLevelInit(JSONObject level){
+    m_level.setBoard(m_board.generateCandys());
     m_level.setBoardBackground(BACKTILES.get(level.getString("background")));
+    m_level.setPlayer(m_player);
+    m_player.setBoard(m_board);
+  }
+
+  void resetLevel(){
+    m_level.reset();
   }
 
   void draw(){
@@ -81,10 +94,6 @@ class GameScene implements IScene{
 
   void lateDraw(){
     m_level.lateDraw();
-    /* if(!m_playing){ */
-    /*   fill(0,0,0,100); */
-    /*   rect(0,0,width,height); */
-    /* } */
   }
 
 }

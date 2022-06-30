@@ -3,6 +3,7 @@ class Player{
   int     m_selectionOne;
   int     m_selectionTwo;
   int     m_points;
+  int     m_initPoints;
   boolean m_shouldTest;
   boolean m_startSwap;
   Board   m_board;
