@@ -78,7 +78,7 @@ class GameScene implements IScene{
   }
 
   void onLevelInit(JSONObject level){
-    m_level.setBoard(m_board.generateCandys());
+    m_level.setBoard(m_board.reuseBoard());
     m_level.setBoardBackground(BACKTILES.get(level.getString("background")));
     m_level.setPlayer(m_player);
     m_player.setBoard(m_board);

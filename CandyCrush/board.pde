@@ -32,6 +32,13 @@ class Board{
     return this;
   }
 
+  Board reuseBoard(){
+    generateCandys();
+    m_candysToDelete.clear();
+    return this;
+  }
+
+
   void update(float dt){
     for (int y = 0; y < BOARD_ROWS; y++){
       for (int x = 0; x < BOARD_COLUMNS; x++){
@@ -49,7 +56,6 @@ class Board{
       }
     }
 
-    println(m_shouldUpdateGravity);
 
     deleteCandys();
     if(m_shouldUpdateGravity){

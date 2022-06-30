@@ -24,7 +24,7 @@ class Level{
   void reset(){
     m_countDown = m_time;
     m_player.m_points = m_player.m_initPoints;
-    m_board.generateCandys();
+    m_board.reuseBoard();
   }
 
   void update(float dt){
@@ -55,7 +55,7 @@ class Level{
   }
 
   boolean hasEnded(){
-    return (m_countDown <= 0);
+    return (m_countDown <= 1);
   }
 
   void lateDraw(){
