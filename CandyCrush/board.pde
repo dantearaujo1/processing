@@ -15,15 +15,21 @@ class Board{
   void init(){
     m_candys = new Candy[BOARD_ROWS][BOARD_COLUMNS];
     m_candysToDelete = new ArrayList<Candy>();
+    generateCandys();
+    m_x = width/2 - BOARD_COLUMNS * RECT_SIZE * g_scaleFactorX/2 ;
+    m_y = height/2 - BOARD_ROWS * RECT_SIZE * g_scaleFactorY/2;
+    m_backgroundTile = new Frame(0,0,32,32);
+  }
+
+
+  Board generateCandys(){
     for (int y = 0; y < BOARD_ROWS; y++){
       for (int x = 0; x < BOARD_COLUMNS; x++){
         CANDYTYPES type = CANDYTYPES.values()[int(random(CANDYTYPES.values().length - 1))];
         m_candys[y][x] = new Candy(x,y,type);
       }
     }
-    m_x = width/2 - BOARD_COLUMNS * RECT_SIZE * g_scaleFactorX/2 ;
-    m_y = height/2 - BOARD_ROWS * RECT_SIZE * g_scaleFactorY/2;
-    m_backgroundTile = new Frame(0,0,32,32);
+    return this;
   }
 
   void update(float dt){
