@@ -14,7 +14,6 @@ class GameScene implements IScene{
     if(app != null){
       m_controlGUI = new ControlP5(app);
     }
-
   }
 
   void onInit(){
@@ -72,9 +71,15 @@ class GameScene implements IScene{
   void loadLevel(String filename, int l){
     JSONObject obj = loadJSONObject(filename);
     JSONArray levels = obj.getJSONArray("Levels");
-    JSONObject level = levels.getJSONObject(l-1);
-    m_level = new Level(l,level.getInt("countdown"),level.getInt("goal"),level.getInt("maxMoves"));
-    onLevelInit(level);
+    if(!levels.isNull(l-1)){
+      JSONObject level = levels.getJSONObject(l-1);
+      m_level = new Level(l,level.getInt("countdown"),level.getInt("goal"),level.getInt("maxMoves"));
+      onLevelInit(level);
+    }
+    else{
+      m_director.addScene(new EndScene(m_director,getPApplet()));
+    }
+
   }
 
   void onLevelInit(JSONObject level){

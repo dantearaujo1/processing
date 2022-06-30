@@ -4,16 +4,18 @@ class Player{
   int     m_selectionTwo;
   int     m_points;
   int     m_initPoints;
+  int     m_moves;
   boolean m_shouldTest;
   boolean m_startSwap;
   Board   m_board;
-  ArrayList<Candy> m_test;
 
   Player(){
     m_position = 0;
     m_selectionOne = -1;
     m_selectionTwo = -1;
     m_points = 0;
+    m_moves = 0;
+    m_initPoints = 0;
     m_board = null;
     m_shouldTest = false;
     m_startSwap = false;
@@ -139,6 +141,7 @@ class Player{
 
     m_selectionOne = -1;
     m_selectionTwo = -1;
+    m_moves++;
     m_startSwap = false;
   }
 
