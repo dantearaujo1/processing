@@ -68,7 +68,9 @@ class Level{
       fill(0,0,0);
       pushStyle();
       textAlign(CENTER);
+      textSize(12 * g_scaleFactorX);
       text(m_endText,width/2,m_tween.getPosition() + 25*g_scaleFactorY);
+      textSize(9 * g_scaleFactorX);
       text(m_endInfoText,width/2,m_tween.getPosition() + 40*g_scaleFactorY);
       popStyle();
     }
