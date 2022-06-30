@@ -4,14 +4,14 @@
       "id":0,
       "countdown":10,
       "goal":10,
-      "maxMoves":99,
+      "maxMoves":10,
       "background":"GROUND"
     },
     {
       "id":1,
       "countdown":30,
       "goal":200,
-      "maxMoves":10,
+      "maxMoves":11,
       "background":"LAVA"
     },
     {

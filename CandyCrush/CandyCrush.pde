@@ -29,10 +29,10 @@ void setup(){
   g_image= loadImage("candys.png");
   g_backgroundTile = loadImage("background_tile.png");
 
-  g_frames = new Frame[6];
+  g_frames = new Frame[7];
   int w = 32;
   int h = 32;
-  for(int i = 0; i < 6; i++){
+  for(int i = 0; i < 7; i++){
     g_frames[i] = new Frame(i*32, 0, w, h);
   }
 
