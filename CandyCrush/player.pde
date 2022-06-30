@@ -72,7 +72,7 @@ class Player{
         text(c.m_type.name(),0,height-100);
         text("X: " + int(c.m_x),35,height-100);
         text("Y: " + int(c.m_y),90,height-100);
-        text("CurD: " + nfs(c.m_currentDuration,2,2),0,height-80);
+        /* text("CurD: " + nfs(c.m_currentDuration,2,2),0,height-80); */
         text("GravD: " + nfs(c.m_gravityCurrentDuration,1,2),65,height-80);
         text("StartX: " + c.m_startX,130,height-100);
         text("StartY: " + c.m_startY,190,height-100);
@@ -237,10 +237,6 @@ class Player{
     target.m_type = current.m_type;
     current.m_type = temp;
 
-    for (Candy c : matchedCandys){
-      c.m_deleteAnim = true;
-      c.m_currentDuration = 0.0;
-    }
     return matchedCandys;
   }
 
