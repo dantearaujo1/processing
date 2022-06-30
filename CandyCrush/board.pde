@@ -38,11 +38,20 @@ class Board{
         m_candys[y][x].update(dt);
       }
     }
+
+
     if(m_candysToDelete.size() > 0){
       m_shouldUpdateGravity = true;
+      for (Candy c : m_candysToDelete){
+        if(c.m_swapAnim || c.m_deleteAnim){
+          m_shouldUpdateGravity = false;
+        }
+      }
     }
-    deleteCandys();
 
+    println(m_shouldUpdateGravity);
+
+    deleteCandys();
     if(m_shouldUpdateGravity){
       updateGravity();
     }
@@ -64,6 +73,9 @@ class Board{
           m_candys[posToFill][x].m_endX = m_candys[y][x].m_x;
           m_candys[posToFill][x].m_gravityAnim = true;
           m_candys[posToFill][x].m_gravityCurrentDuration = 0.0;
+          // Settings these variables to zero make gravity animation smooth
+          m_candys[posToFill][x].m_swapCurrentDuration = 0.0;
+          m_candys[posToFill][x].m_deleteCurrentDuration = 0.0;
 
 
           posToFill -= 1;
@@ -102,18 +114,14 @@ class Board{
 
       first.m_endX = second.m_x;
       first.m_endY = second.m_y;
-      first.m_startY = first.m_y;
-      /* first.m_startX = first.m_x; */
       first.m_type = second.m_type;
       first.m_swapAnim = true;
-      first.m_currentDuration = 0.0;
+      first.m_swapCurrentDuration = 0.0;
 
       second.m_endX = temp.m_x;
       second.m_endY = temp.m_y;
-      second.m_startY = second.m_y;
-      /* second.m_startX = second.m_x; */
       second.m_type = temp.m_type;
-      second.m_currentDuration = 0.0;
+      second.m_swapCurrentDuration = 0.0;
       second.m_swapAnim = true;
 
       if(g_debug){
@@ -126,9 +134,8 @@ class Board{
   void deleteCandys(){
     ArrayList<Candy> toDelete = new ArrayList<Candy>();
     for (Candy c : m_candysToDelete){
-      if(c.m_type == CANDYTYPES.EMPTY && c.m_currentDuration >= c.m_deleteAnimDuration){
+      if(c.m_type == CANDYTYPES.EMPTY){
         toDelete.add(c);
-        c.m_currentDuration = 0;
       }
     }
     for(Candy c : toDelete){
@@ -141,7 +148,9 @@ class Board{
     m_candysToDelete.addAll(candys);
     for(Candy c : m_candysToDelete){
       c.m_deleteAnim = true;
-      c.m_currentDuration = 0.0;
+      c.m_swapAnim = true;
+      c.m_swapCurrentDuration = 0.0;
+      c.m_deleteCurrentDuration = 0.0;
     }
   }
 
