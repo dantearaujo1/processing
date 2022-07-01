@@ -27,7 +27,14 @@ class MenuScene implements IScene{
     m_titleAnimation = true;
     m_titleAnimationDuration = 2.0;
     m_titleAnimationCurrentDuration = 0.0;
-    m_controlGUI.addButton("Start").setSize(int(200*g_scaleFactorX),int(50*g_scaleFactorY)).plugTo(this).setColorBackground(color(0,0,0,150)).setColorForeground(color(122,122,0)).setColorActive(color(255,0,0,100)).getCaptionLabel().setFont(new ControlFont(g_gameFont,int(20*g_scaleFactorX)));
+    m_controlGUI.addButton("Start")
+      .setSize(int(200*g_scaleFactorX),int(50*g_scaleFactorY))
+      .plugTo(this)
+      .setColorBackground(color(0,0,0,150))
+      .setColorForeground(color(122,122,0))
+      .setColorActive(color(255,0,0,100))
+      .getCaptionLabel()
+      .setFont(new ControlFont(g_gameFont,int(20*g_scaleFactorX)));
     loadImages();
     textFont(g_gameFont,56 * g_scaleFactorX);
     textAlign(CENTER,CENTER);
@@ -37,10 +44,13 @@ class MenuScene implements IScene{
     m_controlGUI.getController("Start").hide();
   }
   void onResume(){
-    m_controlGUI.getController("Start").show();
+    m_titleAnimation = true;
+    m_titleAnimationDuration = 2.0;
+    m_titleAnimationCurrentDuration = 0.0;
     textFont(g_gameFont);
     textSize(56 * g_scaleFactorX);
     textAlign(CENTER,CENTER);
+    m_controlGUI.getController("Start").show();
   }
 
   void onPause(){
@@ -70,15 +80,18 @@ class MenuScene implements IScene{
   }
 
   void update(float dt){
-    m_backgroundPosition.x += -50 * dt;
+    m_backgroundPosition.x += -50 * dt * g_scaleFactorX;
     if(m_titleAnimationCurrentDuration >= m_titleAnimationDuration){
       m_titleAnimationCurrentDuration = m_titleAnimationDuration;
       m_titleAnimation = false;
     }
     if(m_titleAnimation){
-      m_titlePosition.y = - 100 + (height/2 + 100) * m_titleAnimationCurrentDuration/m_titleAnimationDuration;
+      m_titlePosition.y = interpolation(-100*g_scaleFactorY,
+          height/2+0*g_scaleFactorY,
+          m_titleAnimationCurrentDuration/m_titleAnimationDuration);
+
       controlP5.Controller c = m_controlGUI.getController("Start");
-      c.setPosition(width/2 - c.getWidth()/2,m_titlePosition.y + 100 * g_scaleFactorY);
+      c.setPosition(width/2 - c.getWidth()/2,m_titlePosition.y + 50 * g_scaleFactorY);
     }
 
     if(m_backgroundPosition.x <= -m_background.width){

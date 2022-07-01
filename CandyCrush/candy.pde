@@ -79,12 +79,20 @@ class Candy{
   void draw(float offsetX, float offsetY){
     if(m_type != CANDYTYPES.EMPTY){
       if(m_deleteAnim){
-        float a = interpolation(255,0,m_deleteCurrentDuration/m_deleteAnimDuration);
+        float a = interpolation(255,0,
+                                m_deleteCurrentDuration/m_deleteAnimDuration);
         tint(255,a);
       }
       Frame f = CANDYS.get(m_type.name());
       if(f != null){
-        image(g_image,offsetX + m_x * RECT_SIZE*g_scaleFactorX, offsetY + m_y * RECT_SIZE*g_scaleFactorY,CANDY_SIZE*g_scaleFactorX,CANDY_SIZE*g_scaleFactorY,f.x,f.y,f.x + f.width, f.y + f.height);
+        image(g_image,offsetX + m_x * RECT_SIZE * g_scaleFactorX,
+              offsetY + m_y * RECT_SIZE * g_scaleFactorY,
+              CANDY_SIZE * g_scaleFactorX,
+              CANDY_SIZE * g_scaleFactorY,
+              f.x,
+              f.y,
+              f.x + f.width,
+              f.y + f.height);
         noTint();
       }
     }
@@ -97,7 +105,9 @@ class Candy{
       m_startY = m_endY;
       m_initialCurrentDuration = m_initialAnimDuration;
     }
-    m_y = interpolation(m_startY,m_endY,m_initialCurrentDuration/m_initialAnimDuration);
+    m_y = interpolation(m_startY,
+                        m_endY,
+                        m_initialCurrentDuration/m_initialAnimDuration);
 
     m_initialCurrentDuration += dt;
   }
@@ -116,8 +126,12 @@ class Candy{
       m_swapAnim = false;
       m_swapCurrentDuration = m_swapAnimDuration;
     }
-    m_y = interpolation(m_startY,m_endY,flip(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
-    m_x = interpolation(m_startX,m_endX,flip(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
+    m_y = interpolation(m_startY,
+                        m_endY,
+                        flip(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
+    m_x = interpolation(m_startX,
+                        m_endX,
+                        flip(easeOut(m_swapCurrentDuration/m_swapAnimDuration)));
     m_swapCurrentDuration += dt;
   }
 

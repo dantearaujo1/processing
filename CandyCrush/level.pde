@@ -55,7 +55,15 @@ class Level{
 
     for(int i = 0; i < (m_maxMoves-m_player.m_moves); i++){
 
-      image(g_backgroundTile,m_board.m_x + 0.75 * BOARD_COLUMNS * RECT_SIZE * g_scaleFactorX + (i % int(m_maxMoves/2)) * 12  , m_board.m_y - 10 * g_scaleFactorY * int(i/ int(m_maxMoves/2) + 1),12*g_scaleFactorX,12*g_scaleFactorY, int(4*32.0),int(0.0),int(5*32.0),int(32.0));
+      image(g_backgroundTile
+          ,m_board.m_x + 0.75 * BOARD_COLUMNS * RECT_SIZE * g_scaleFactorX + (i % int(m_maxMoves/2)) * 12 * g_scaleFactorX
+          ,m_board.m_y - 12 * g_scaleFactorY * int(i/ int(m_maxMoves/2) + 1)
+          ,12*g_scaleFactorX
+          ,12*g_scaleFactorY
+          ,int(4*32.0)
+          ,int(0.0)
+          ,int(5*32.0)
+          ,int(32.0));
 
     }
     text(int(m_player.m_points) + "/" + m_goalPoints, m_board.m_x + textWidth(str(m_player.m_points) + "/" + str(m_goalPoints))/2 , m_board.m_y - 10 * g_scaleFactorY);

@@ -15,13 +15,13 @@ HashMap<String,Frame> CANDYS = new HashMap<String,Frame>();
 
 void settings(){
   /* fullScreen(P2D); */
-  size(600,600);
+  size(900,600);
   noSmooth();
 }
 // Setup Initial State
 void setup(){
   g_scaleFactorX = width/600.0;
-  g_scaleFactorY = width/600.0;
+  g_scaleFactorY = height/600.0;
   g_debug = false;
 
   g_debugFont = createFont("Serif",9);
