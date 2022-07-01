@@ -25,6 +25,15 @@ class SceneManager{
       addScene(scene);
     }
   }
+  void changeScene(int id){
+    if(id < m_scenes.size()){
+      m_currentScene.onPause();
+      m_nextScene = m_scenes.get(id);
+      m_transition.init();
+      m_nextScene.onResume();
+      return;
+    }
+  }
   void changeScene(IScene scene, ITransition transition){
     if(scene != null){
       for(IScene s : m_scenes){
